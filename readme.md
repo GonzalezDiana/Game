@@ -1,2 +1,4 @@
-quiero ver si estoy en game jajajjaaj chaaa
-mama
+# Truco Project
+
+Este es un proyecto para la asignatura "Análisis y Diseño de Sistemas" 
+
