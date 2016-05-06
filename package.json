@@ -1,0 +1,14 @@
+{
+  "name": "Truco",
+  "version": "1.0.0",
+  "description": "Juego de trugo",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "Diana",
+  "license": "ISC",
+  "dependencies": {
+    "chai": "~3.5.0"
+  }
+}
