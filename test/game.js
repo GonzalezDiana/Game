@@ -6,17 +6,10 @@ var Game = gameModel.game;
 describe('Game', function() {
 
   describe("properties", function(){
-    it('la cantidad de jugadores debe ser 2', function(){
+    it('the number of players must be two', function(){
       var d = new Game();
 			expect(d).to.have.any.keys('player1', 'player2');
     });
 	});
 });
-
-
-
-	
-	
-
-
 

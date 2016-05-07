@@ -1,4 +1,4 @@
-/* Definimos el modelo Game */
+/* Define the model game. */
 var _ = require('lodash');
 var playerModel = require('./player');
 var deckModel = require('./deck');
@@ -20,6 +20,3 @@ function Game(player1, player2){
 var playerNumbers = [1, 2]; 
 
 
-
-
-module.exports.game = Game;
