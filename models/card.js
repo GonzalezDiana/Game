@@ -61,5 +61,27 @@ Card.prototype.confront = function(card){
     return -1;
 };
 
+//Black Card
+Card.prototype.isBlack = function(){
+  return this.number == 11 || this.number == 12 || this.number == 10;
+};
+
+//Points
+Card.prototype.puntos = function(card){
+		if(this.suit == card.suit) {
+			if(this.isBlack() && card.isBlack())
+				return 20;
+			else if(this.isBlack() || card.isBlack())
+				if(this.isBlack())
+					return 20 + card.number;
+				else 
+					return this.number + 20;
+			else
+				return (this.number + card.number + 20);
+		}
+		else 
+				return Math.max(this.number, card.number);
+};
+
 module.exports.card = Card;
 

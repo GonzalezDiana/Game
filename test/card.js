@@ -6,48 +6,65 @@ var Card = cardModel.card;
 describe('Card', function() {
 
   describe("properties", function(){
-		//debe tener al menos alguna propiedad(palo) 
+		//Must have at least some property
     it('should have a suit property', function(){
       var c = new Card(1, 'oro');
       expect(c).to.have.property('suit'); 
     });
-		//debe tener al menos un numero
+		//Must have at least one number
     it('should have a number property', function(){
       var c = new Card(1, 'oro');
       expect(c).to.have.property('number');
     });
   });
 
-	//Mostrando cartas
+	//Displaying cards
   describe("#show", function(){
     it('should returns card', function(){
       var c = new Card(1, 'copa');
       expect(c.show()).to.be.eq("1: copa");
     });
   });
-	//confronta las cartas
+	//confronts the cards
   describe("#confront", function(){
     var c = new Card(7, 'espada');
     var x = new Card(7, 'copa');
     var y = new Card(2, 'oro');
-    //Cuando tiene mayor peso c retorna 1 
+  
     describe("when this is better than argument", function(){
       it("should returns 1", function(){
         expect(c.confront(x)).to.be.eq(1);
       })
     });
-		//cuando tiene menos peso x retorna -1
+
     describe("when this is worst than argument", function(){
       it("should returns -1", function(){
         expect(x.confront(c)).to.be.eq(-1);
       })
     });
-		//cuando tiene mayor peso y deberia retornar 1 pero retorna 0
+		
     describe("when this is better than argument", function(){
       it("should returns 1", function(){
         expect(y.confront(x)).to.be.eq(1);
       })
     });
+
+		//Black Card
+		describe("Black Card", function(){
+		  it("should returns true when cards is ten, eleven or twelve", function(){
+				var c = new Card(11, 'copa');
+				expect(c.isBlack()).to.be.eq(true);
+			})
+		});
+
+		//Black Card
+		describe("Black Card", function(){
+		  it("should returns false when cards not ten, eleven or twelve", function(){
+				var d = new Card(4, 'copa');
+				expect(d.isBlack()).to.be.eq(false);
+			})
+		})
+		
   });
 });
 

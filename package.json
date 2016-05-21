@@ -9,6 +9,7 @@
   "author": "Diana",
   "license": "ISC",
   "dependencies": {
-    "chai": "~3.5.0"
+    "chai": "~3.5.0",
+    "javascript-state-machine": "~2.3.5"
   }
 }

@@ -14,9 +14,6 @@ function Game(player1, player2){
 	this.player2 = new Player(player2, deck[3], deck[4], deck[5]);
 };
 
-/*
- * Number of player used in Truco game.
- */
-var playerNumbers = [1, 2]; 
+
 
 
