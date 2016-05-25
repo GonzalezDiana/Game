@@ -3,6 +3,7 @@ var _ = require('lodash');
 var playerModel = require('./player');
 var deckModel = require('./deck');
 var cardModel = require('./card');
+var roundModel = require('./round');
 
 var Player = playerModel.player;
 var Round  = roundModel.round;
