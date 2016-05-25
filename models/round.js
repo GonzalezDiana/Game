@@ -9,6 +9,7 @@
 var _ = require('lodash');
 var StateMachine = require("../node_modules/javascript-state-machine/state-machine.js");
 var deckModel = require("./deck");
+
 var Deck  = deckModel.deck;
 
 function newTrucoFSM(){
