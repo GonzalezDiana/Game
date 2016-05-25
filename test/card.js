@@ -49,16 +49,16 @@ describe('Card', function() {
       })
     });
 
-		//Black Card
-		describe("Black Card", function(){
+		//Black Card True
+		describe("Black Card True", function(){
 		  it("should returns true when cards is ten, eleven or twelve", function(){
 				var c = new Card(11, 'copa');
 				expect(c.isBlack()).to.be.eq(true);
 			})
 		});
 
-		//Black Card
-		describe("Black Card", function(){
+		//Black Card False
+		describe("Black Card False", function(){
 		  it("should returns false when cards not ten, eleven or twelve", function(){
 				var d = new Card(4, 'copa');
 				expect(d.isBlack()).to.be.eq(false);

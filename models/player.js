@@ -19,7 +19,7 @@ function Player(name) {
  /*
 	* user envido points
 	*/
-	this.envidoPoints = 0;
+	this.envidoPoints = 0;    //tengo que asignarle el resultado de la funcion points?
 }
 
 /*

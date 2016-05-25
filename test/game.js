@@ -38,4 +38,10 @@ describe('Game#play', function(){
 		game.play('player2', 'quiero');
 		expect(game.score).to.deep.equal([0, 2]);
 	});
+
+	it('plays [truco, quiero] should gives 4 points to winner', function(){
+		game.play('player1', 'truco');
+		game.play('player2', 'quiero');
+		expect(game.score).to.deep.equal([0, 2]); //deberia retornar 4, hay que implementar el calculatescore
+	}); 
 });
