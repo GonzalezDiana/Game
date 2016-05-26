@@ -23,12 +23,42 @@ describe('Player', function(){
 		game.player1.setCards([
 			new Card(1, 'copa'),
 			new Card(7, 'oro'),
-			new Card(2, 'oro')
+			new Card(6, 'oro')
 		]);
-		it('should return 29', function(){
-      expect(game.player1.points()).to.be.eq(29);
+		game.player2.setCards([
+			new Card(12, 'copa'),
+			new Card(10, 'copa'),
+			new Card(3, 'oro')
+		]);
+
+		it('should points player1 return 33', function(){
+      expect(game.player1.points()).to.be.eq(33);
     });
-	 });
+
+		it('should points player2 return 20', function(){
+			expect(game.player2.points()).to.be.eq(20);
+	 	});
+		
+		var game2 = new Game();
+		game2.player1.setCards([
+			new Card(1, 'copa'),
+			new Card(7, 'oro'),
+			new Card(2, 'basto')
+		]);
+		game2.player2.setCards([
+			new Card(11, 'copa'),
+			new Card(11, 'basto'),
+			new Card(11, 'oro')
+		]);
+	
+		it('should points game2.player1 return 7', function(){
+			expect(game2.player1.points()).to.be.eq(7);
+	 	});
+		
+		it('should points game2.player2 return 0', function(){
+			expect(game2.player2.points()).to.be.eq(0);
+	 	});
+	});
 });
 
 

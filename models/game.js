@@ -12,12 +12,12 @@ function Game(player1, player2){
    /*
     * Player 1
     */
-   this.player1 = new Player('Player 1');
+   this.player1 = new Player('player1');
  
    /*
     * Player 2
     */
-   this.player2 = new Player('Player 2');
+   this.player2 = new Player('player2');
  
    /*
     * sequence of previous Rounds
@@ -50,7 +50,7 @@ function Game(player1, player2){
    if(this.currentRound.fsm.cannot(action))
      throw new Error("[ERROR] INVALID MOVE...");
  
-   return this.currentRound.play(action, value);
+   return this.currentRound.play(player, action, value);
  };
  
  /*
@@ -72,6 +72,23 @@ function Game(player1, player2){
    return "player1" === player ? "player2" : "player1";
  };
  
+Game.prototype.pointWin = function(){
+	if (this.player1.points() > this.player2.points()){
+		return this.player1;
+	}
+	if (this.player1.points() < this.player2.points()){
+		return this.player2;
+	}
+	if (this.player1.points() == this.player2.points()){
+		if (this.currentHand == this.player1)
+			return this.player1;
+		else 
+			return this.player2;
+		
+	}
+}
+
+
  module.exports.game = Game;
 
 

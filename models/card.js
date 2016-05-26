@@ -79,8 +79,17 @@ Card.prototype.puntos = function(card){
 			else
 				return (this.number + card.number + 20);
 		}
-		else 
+		else{
+			if(this.isBlack() && card.isBlack())
+				return 0;
+			else if(this.isBlack() || card.isBlack())
+				if(this.isBlack())
+					return card.number;
+				else 
+					return this.number;
+			else 
 				return Math.max(this.number, card.number);
+	 }
 };
 
 module.exports.card = Card;

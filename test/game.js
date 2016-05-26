@@ -27,21 +27,36 @@ describe('Game#play', function(){
 		]);
 
 		game.player2.setCards([
- 			new Card(6, 'copa'),
+ 			new Card(1, 'copa'),
 			new Card(7, 'copa'),
 			new Card(2, 'basto')
 		]);
 	});
-	 
+	
 	it('plays [envido, quiero] should gives 2 points to winner', function(){
 		game.play('player1', 'envido');
 		game.play('player2', 'quiero');
-		expect(game.score).to.deep.equal([0, 2]);
+		expect(game.score).to.deep.equal([2, 0]);
 	});
 
-	it('plays [truco, quiero] should gives 4 points to winner', function(){
+	it('plays [envido, no-quiero] should gives 1 points to player 1', function(){
+		game.play('player1', 'envido');
+		game.play('player2', 'no-quiero');
+		expect(game.score).to.deep.equal([1, 0]);
+	});
+
+	//el jugador uno canta truco
+	it('plays [truco, no-quiero] should gives 1 points to player1', function(){
 		game.play('player1', 'truco');
-		game.play('player2', 'quiero');
-		expect(game.score).to.deep.equal([0, 2]); //deberia retornar 4, hay que implementar el calculatescore
+		game.play('player2', 'no-quiero');
+		expect(game.score).to.deep.equal([1,0]); 
+	}); 
+
+	//el jugador uno juega una carta y el jugador dos canta truco
+	it('plays [truco, no-quiero] should gives 1 points to player2', function(){
+		game.play('player1', 'playcard', game.player1.cards[0]);		
+		game.play('player2', 'truco');
+		game.play('player1', 'no-quiero');
+		expect(game.score).to.deep.equal([0,1]); 
 	}); 
 });
