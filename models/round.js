@@ -61,7 +61,6 @@ function Round(game, turn){
 
 	this.puntostruco=1;
 
-	this.cartasjugadas=[];
 }
 
 /*
@@ -146,6 +145,35 @@ Round.prototype.calculateScore = function(action){
 	}
   return this.score;
 }
+
+//Inserto la carta en el arreglo de las cartas sobre la mesa(cartas jugadas)
+Round.prototype.guardarCarta = function (player, card){	
+	if (this.game.player1 === player){
+ 		return this.game.player1.cartasJugadas.push(card);
+	}else
+		return this.game.player2.cartasJugadas.push(card);
+}
+
+//Toma un jugador y la carta, devuelve el arreglo de las cartas del jugador sin la carta que jugó
+Round.prototype.tirarCarta = function (player,card){	
+	
+ 
+	if (player.cards[0] == card){
+		player.cards[0] = undefined;
+		return this.game.player;
+	}
+	if (player.cards[1] == card){
+		//console.log(this.cartasJugadas);
+		player.cards[1] = undefined;
+		return this.game.player;
+	}
+	if (player.cards[2] == card){
+		player.cards[2] = undefined;
+		return this.game.player;
+	}	
+}
+
+//Round.prototype.
 
 /*
 * Let's Play :)

@@ -16,10 +16,15 @@ function Player(name) {
 	*/
 	this.cards = [];
 
+	/*
+	cartas jugadas	
+	*/	
+	this.cartasJugadas = [];
+
  /*
 	* user envido points
 	*/
-	this.envidoPoints = 0;    //tengo que asignarle el resultado de la funcion points?
+	this.envidoPoints = 0;    
 }
 
 /*

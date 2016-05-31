@@ -7,6 +7,7 @@ var round_model   = require("../models/round");
 var Game  = game_model.game;
 var Round = round_model.round;
 var Card = card_model.card;
+var Player = player_model.player;
 
 describe('Round', function(){
 	var game;
@@ -28,9 +29,28 @@ describe('Round', function(){
 		});
 	});
 
+	describe("#tirarCarta", function(){
+		var game = new Game();
+		game.player1.setCards([
+			new Card(1, 'copa'),
+			new Card(7, 'oro'),
+			new Card(6, 'oro')
+		]);
+		it("mostrar carta eliminada", function(){
+			var round = new Round(game);
+			var aux = game.player1.cards[1];
+			round.guardarCarta(round.game.player1,aux);
+			round.tirarCarta(round.game.player1 , aux);
+			var carta2 = game.player1.cards[0];
+			round.guardarCarta(round.game.player1, carta2);
+			round.tirarCarta(round.game.player1 , carta2);
+			console.log(round.game.player1);
+			
 
+		});
+	});
 
-
+});
 /*describe('Round#onplaycard', function(){
 	var game;
 	beforeEach(function(){
@@ -57,4 +77,3 @@ describe('Round', function(){
 	});
 });*/
 
-});
