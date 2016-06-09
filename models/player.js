@@ -5,29 +5,27 @@
  */
 
 var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/Game');
+var db= mongoose.connection;
 var _ = require('lodash');
 
-function Player(name) {
-  /*
-   * the player's name
-   */
+var PlayerSchema = mongoose.Schema({
+	name: String,
+	cards: Array,
+	cartasJugadas: Array,
+	envidoPoints: Number
+});
+
+var Player = mongoose.model('Player', PlayerSchema);
+
+/*function Player(name) {
  this.name = name;
-
-	/*
-	* cards of this user
-	*/
 	this.cards = [];
-
-	/*
-	cartas jugadas	
-	*/	
+	
 	this.cartasJugadas = [];
 
- /*
-	* user envido points
-	*/
 	this.envidoPoints = 0;    
-}
+} */ 
 
 /*
  * Add cards to user and calculate the user points

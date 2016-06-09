@@ -10,6 +10,38 @@ var Card = cardModel.card;
 var Game = gameModel.game;
 
 describe('Player', function(){
+	var player1 = new Player({name: 'Juan'});
+	var player2 = new Player({name: 'Emma Watson'});
+	it('Should have a name', function(){
+		expect(player1).to.have.property('name');
+		expect(player2).to.have.property('name');
+	});
+
+	//Guarda en mongoose
+	it('#save', function(done){
+		var data = {
+			name: 'Juan',
+			cards: [new Card(1,'espada')],
+			envidoPoints:28,
+			cartasJugadas: []
+		}
+		var p = new Player(data);
+		var callback = function (err, Player){ //El save ejecuta la funcion que le pasamos como parametro (que recibe error y data)
+			if (err)
+				done(err);
+			expect(player1.name).to.be.eq(data.name);
+			done();
+		};
+		p.save(callback);
+	});
+	/*it('Should recover info', function(){
+		Player.findOne({name: 'Juan'}, function(err,player)) 	
+	}); */
+});
+
+
+
+/*describe('Player', function(){
 	var player1 = new Player('Brad Pitt');
 	var player2 = new Player('Emma Watson');
 	it('Should have a name', function(){
@@ -59,6 +91,6 @@ describe('Player', function(){
 			expect(game2.player2.points()).to.be.eq(0);
 	 	});
 	});
-});
+}); */
 
 
