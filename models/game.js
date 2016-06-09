@@ -61,7 +61,6 @@ function Game(player1, player2){
    this.currentRound = round;
    this.currentHand = switchPlayer(this.currentHand);
    this.rounds.push(round);
- 
    return this;
  }
  
@@ -84,7 +83,6 @@ Game.prototype.pointWin = function(){
 			return this.player1;
 		else 
 			return this.player2;
-		
 	}
 }
 

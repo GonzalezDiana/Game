@@ -44,13 +44,36 @@ describe('Round', function(){
 			var carta2 = game.player1.cards[0];
 			round.guardarCarta(round.game.player1, carta2);
 			round.tirarCarta(round.game.player1 , carta2);
-			console.log(round.game.player1);
-			
-
+			//console.log(round.game.player1);
 		});
 	});
 
+
+	describe("#tirar todas las cartas", function(){
+		var game = new Game();
+		game.player1.setCards([
+			new Card(2, 'copa'),
+			new Card(7, 'oro'),
+			new Card(6, 'oro')
+		])
+		it("tirar todas las cartas", function(){
+			var round = new Round(game);
+			var carta1 = game.player1.cards[1];
+			round.guardarCarta(round.game.player1, carta1);
+			round.tirarCarta(round.game.player1 , carta1);
+			var carta2 = game.player1.cards[2];
+			round.guardarCarta(round.game.player1, carta2);
+			round.tirarCarta(round.game.player1 , carta2);
+			var carta3 = game.player1.cards[0];
+			round.guardarCarta(round.game.player1, carta3);
+			round.tirarCarta(round.game.player1 , carta3); 
+			expect(round.tiroTodas(round.game.player1)).to.be.eq(true);
+			console.log(round.game.player1);
+		});
+	}); 
+
 });
+
 /*describe('Round#onplaycard', function(){
 	var game;
 	beforeEach(function(){

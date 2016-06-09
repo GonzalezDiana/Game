@@ -3,6 +3,8 @@
  * Represents a player in the game
  * @param name [String]: old state to intialize the new state
  */
+
+var mongoose = require('mongoose');
 var _ = require('lodash');
 
 function Player(name) {
