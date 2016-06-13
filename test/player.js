@@ -9,7 +9,7 @@ var Player = playerModel.player;
 var Card = cardModel.card;
 var Game = gameModel.game;
 
-describe('Player', function(){
+/*describe('Player', function(){
 	var player1 = new Player({name: 'Juan'});
 	var player2 = new Player({name: 'Emma Watson'});
 	it('Should have a name', function(){
@@ -34,14 +34,14 @@ describe('Player', function(){
 		};
 		p.save(callback);
 	});
-	/*it('Should recover info', function(){
+	it('Should recover info', function(){
 		Player.findOne({name: 'Juan'}, function(err,player)) 	
-	}); */
-});
+	}); 
+}); */
 
 
 
-/*describe('Player', function(){
+describe('Player', function(){
 	var player1 = new Player('Brad Pitt');
 	var player2 = new Player('Emma Watson');
 	it('Should have a name', function(){
@@ -50,7 +50,7 @@ describe('Player', function(){
 	});
 
 	//controls the amount of points
-	describe('Points', function() {
+	/*describe('Points', function() {		
 		var game = new Game();
 		game.player1.setCards([
 			new Card(1, 'copa'),
@@ -62,8 +62,8 @@ describe('Player', function(){
 			new Card(10, 'copa'),
 			new Card(3, 'oro')
 		]);
-
-		it('should points player1 return 33', function(){
+		*/
+		/*it('should points player1 return 33', function(){
       expect(game.player1.points()).to.be.eq(33);
     });
 
@@ -71,7 +71,7 @@ describe('Player', function(){
 			expect(game.player2.points()).to.be.eq(20);
 	 	});
 		
-		var game2 = new Game();
+		var game2 = new Game{};
 		game2.player1.setCards([
 			new Card(1, 'copa'),
 			new Card(7, 'oro'),
@@ -89,8 +89,8 @@ describe('Player', function(){
 		
 		it('should points game2.player2 return 0', function(){
 			expect(game2.player2.points()).to.be.eq(0);
-	 	});
-	});
-}); */
+	 	}); */
+	//});
+}); 
 
 

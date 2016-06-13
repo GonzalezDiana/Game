@@ -5,40 +5,55 @@ var deckModel = require('./deck');
 var cardModel = require('./card');
 var roundModel = require('./round');
 
+/** MONGOOSE **/
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/Game');
+// var db= mongoose.connection;
+var db= mongoose.createConnection('mongodb://localhost/Game');
+
+db.on('error', console.error.bind(console, 'conection error'));
+db.once('open', function(){
+	console.log('We are connected!!!');
+});
+
+//db.game.remove();
+
+//var Schema = mongoose.Schema;
+// var ObjectId = Schema.ObjectId;
+
 var Player = playerModel.player;
 var Round  = roundModel.round;
+
+var ObjectId = mongoose.Schema.Types.ObjectId; //Para jugadores
+
+var GameSchema = mongoose.Schema({
+        name: String,
+	player1: {type: Number, ref: 'Player'},
+	player2: {type: ObjectId, ref: 'Player'},
+	rounds: Array,
+	currentHand: {type: ObjectId, ref: 'Player'}, //jugador
+	currentRound: {type: ObjectId, ref: 'Round'},
+	score: Array
+});
+
+var Game = mongoose.model('Game', GameSchema);
+
  
-function Game(player1, player2){
-   /*
-    * Player 1
-    */
+/*function Game(player1, player2){
+  
    this.player1 = new Player('player1');
- 
-   /*
-    * Player 2
-    */
+   
    this.player2 = new Player('player2');
  
-   /*
-    * sequence of previous Rounds
-    */
    this.rounds = [];
  
-   /*
-    * Game's hand
-    */
    this.currentHand = 'player1';
  
-   /*
-    * Game's hand
-    */
    this.currentRound = undefined;
  
-   /*
-    * Game' score
-   */
+  
    this.score = [0, 0];
- }
+ } */
  
  /*
   * Check if it's valid move and play in the current round
