@@ -7,8 +7,6 @@ var roundModel = require('./round');
 
 /** MONGOOSE **/
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/Game');
-// var db= mongoose.connection;
 var db= mongoose.createConnection('mongodb://localhost/Game');
 
 db.on('error', console.error.bind(console, 'conection error'));
@@ -18,43 +16,23 @@ db.once('open', function(){
 
 //db.game.remove();
 
-//var Schema = mongoose.Schema;
-// var ObjectId = Schema.ObjectId;
-
 var Player = playerModel.player;
 var Round  = roundModel.round;
 
 var ObjectId = mongoose.Schema.Types.ObjectId; //Para jugadores
 
+/*Definimos el esquema de nuestro juego*/
 var GameSchema = mongoose.Schema({
-        name: String,
-	player1: {type: Number, ref: 'Player'},
+	name: String,
+	player1: {type: ObjectId, ref: 'Player'},
 	player2: {type: ObjectId, ref: 'Player'},
-	rounds: Array,
-	currentHand: {type: ObjectId, ref: 'Player'}, //jugador
+	rounds: {type: Array, default : [] },
+	currentHand: String, //jugador
 	currentRound: {type: ObjectId, ref: 'Round'},
-	score: Array
+	score: {type: Array, default : [0,0] }
 });
 
 var Game = mongoose.model('Game', GameSchema);
-
- 
-/*function Game(player1, player2){
-  
-   this.player1 = new Player('player1');
-   
-   this.player2 = new Player('player2');
- 
-   this.rounds = [];
- 
-   this.currentHand = 'player1';
- 
-   this.currentRound = undefined;
- 
-  
-   this.score = [0, 0];
- } */
- 
  /*
   * Check if it's valid move and play in the current round
   */

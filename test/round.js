@@ -72,7 +72,7 @@ var Player = player_model.player;
 		});
 	}); 
 
-}); */
+}); 
 
 /*describe('Round#onplaycard', function(){
 	var game;

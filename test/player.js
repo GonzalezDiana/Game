@@ -9,7 +9,7 @@ var Player = playerModel.player;
 var Card = cardModel.card;
 var Game = gameModel.game;
 
-/*describe('Player', function(){
+describe('Player', function(){
 	var player1 = new Player({name: 'Juan'});
 	var player2 = new Player({name: 'Emma Watson'});
 	it('Should have a name', function(){
@@ -18,7 +18,7 @@ var Game = gameModel.game;
 	});
 
 	//Guarda en mongoose
-	it('#save', function(done){
+	/*it('#save Juan', function(done){
 		var data = {
 			name: 'Juan',
 			cards: [new Card(1,'espada')],
@@ -34,23 +34,25 @@ var Game = gameModel.game;
 		};
 		p.save(callback);
 	});
-	it('Should recover info', function(){
-		Player.findOne({name: 'Juan'}, function(err,player)) 	
-	}); 
-}); */
+
+	it('Should recover info', function(done){
+    Player.findOne({name: 'Juan'}).exec(function(err, player){
+      console.log("encontre el jugador Juan");
+      console.log(player.name);
+			done();
+		});
+	}); */
+
+});
 
 
 
-describe('Player', function(){
-	var player1 = new Player('Brad Pitt');
-	var player2 = new Player('Emma Watson');
-	it('Should have a name', function(){
-		expect(player1).to.have.property('name');
-		expect(player2).to.have.property('name');
-	});
 
+
+
+//-------------------------------------------------------------------------------------------------------------
 	//controls the amount of points
-	/*describe('Points', function() {		
+/*	describe('Points', function() {		
 		var game = new Game();
 		game.player1.setCards([
 			new Card(1, 'copa'),
@@ -62,14 +64,14 @@ describe('Player', function(){
 			new Card(10, 'copa'),
 			new Card(3, 'oro')
 		]);
-		*/
-		/*it('should points player1 return 33', function(){
+		it('should points player1 return 33', function(){
       expect(game.player1.points()).to.be.eq(33);
     });
 
 		it('should points player2 return 20', function(){
 			expect(game.player2.points()).to.be.eq(20);
 	 	});
+	});
 		
 		var game2 = new Game{};
 		game2.player1.setCards([
@@ -89,8 +91,8 @@ describe('Player', function(){
 		
 		it('should points game2.player2 return 0', function(){
 			expect(game2.player2.points()).to.be.eq(0);
-	 	}); */
-	//});
-}); 
+	 	}); 
+	});
+}); */
 
 

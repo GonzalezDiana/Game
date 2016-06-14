@@ -25,10 +25,10 @@ function Deck(){
  */
 Deck.prototype.sorted = function(){
   return _.flatten( _.map(suits, function(suit){
-                      return _.map(cardNumbers, function(number){
-                        return new Card(number, suit);
-                      });
-                    }));
+   return _.map(cardNumbers, function(number){
+    return new Card(number, suit);
+		});
+	}));
 };
 
 /*

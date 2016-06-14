@@ -3,7 +3,7 @@ var cardModel = require("../models/card.js");
 
 var Card = cardModel.card;
 
-/*describe('Card', function() {
+describe('Card', function() {
 
   describe("properties", function(){
 		//Must have at least some property
@@ -67,4 +67,3 @@ var Card = cardModel.card;
 		
   });
 });
-*/

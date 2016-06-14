@@ -9,7 +9,7 @@ var Card = cardModel.card;
 
 describe('Game', function(done){
 //Guarda en mongoose
-/*	it('#save', function(done){
+	it('#save El juego de tu vida', function(done){
 		var g = new Game({name: 'El juego de tu vida'});
 		console.log(g.player1);
 
@@ -23,20 +23,18 @@ describe('Game', function(done){
 				done(err);
       }
 
-      var p = new Player({name: "juan", currentGame: game});
+      var p = new Player({name: "Juan", currentGame: game});
 
       p.save(function(err, player){
          console.log("saving player");
          console.log(player.name);
-         console.log(player.game.toString());
       });
  
       done();
 		});
-	});
-*/
+	});   
 
-  it('#save', function(done){
+ /* it('#save Diana', function(done){
 		var p = new Player({name: 'Diana'});
 		
 	  p.save(function(err, player){
@@ -58,7 +56,7 @@ describe('Game', function(done){
  
       done();
 		});
-	});
+	}); 
 
 
 	it('#recovering', function(done){
@@ -66,13 +64,12 @@ describe('Game', function(done){
         console.log("Recovering ref");
         console.log(err);
         console.log(game.toString());
-        console.log(game.player1.toString());
+        //console.log(game.player1.toString());
         done();
       });
-  });
+  }); */ 
 
-/*
-  it('#updating', function(done){
+ /* it('#updating', function(done){
     Game.findOne({name: 'El juego de tu vida'}).exec(function(err, game){
       console.log("encontre el juego");
       console.log(game.toString());
@@ -93,33 +90,8 @@ describe('Game', function(done){
       });
      done();
     });
-  });
-*/  
+  }); */
 
 });
 
-
-/*
-var callback = function (err, game){ //El save ejecuta la funcion que le pasamos como parametro (que recibe error y data)
-			console.log("adento del callback de save game");
-console.log(err);
-console.log(game);
-			if (console) { err.log(err);
-				done(err); }
-
-      var player1 = new Player({name: 'Juan', _creator: game._id});
-		  //var player2 = new Player({name: 'Emma Watson'});
-		  player1.save(function(err){
-        if(err)
-          console.log("errorR");
-			});
-			game.player1 = player1;
-			expect(game.player1.name).to.have.property('Juan');			
-					console.log(g.player1);
-
-//expect(g.jug1.name).to.have.property('Juan');			//---
-			done();
-		};
-
-*/
 
