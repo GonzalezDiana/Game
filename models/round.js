@@ -24,13 +24,7 @@ function newTrucoFSM(){
 		{ name: 'playcard', from: ['quiero', 'no-quiero','primer carta', 'played card'],  to: 'played card' },
 		{ name: 'quiero',    from: ['envido', 'truco'],              to: 'quiero'  },
 		{ name: 'no-quiero', from: ['envido', 'truco'],              to: 'no-quiero' },
-	]/*,
-
-	callbacks: {
-          onplaycard: function(event, from, to, player, card) {
-					this.cartasjugadas.push((player,card)):
-          }
-  }*/
+	]
 	});
 	return fsm;
 }
@@ -68,6 +62,9 @@ function Round(game, turn){
 	this.prevstate=null;
 
 	this.puntostruco=1;
+
+//Reparto Cartas
+	this.deal();
 
 }
 

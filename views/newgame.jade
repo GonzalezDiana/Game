@@ -1,0 +1,20 @@
+extends layout
+
+block content
+  .container
+    h1 ¡Start to play!
+    br
+    form(role='form', action="/newgame",method="post", style='max-width: 300px;')
+      .form-group
+          p Game Name
+          input.form-control(type='text', name="GameName", placeholder='Enter GameName')
+          br
+          p Player 1
+          input.form-control(type='text', name="Player1", placeholder='Enter Username')
+          br
+          p Player 2
+          input.form-control(type='text', name="Player2", placeholder='Enter Username')
+      button.btn.btn-default(type='submit') Accept
+      &nbsp;
+      a(href='/')
+        button.btn.btn-primary(type="button") Cancel

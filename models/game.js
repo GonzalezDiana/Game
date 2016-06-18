@@ -24,13 +24,28 @@ var ObjectId = mongoose.Schema.Types.ObjectId; //Para jugadores
 /*Definimos el esquema de nuestro juego*/
 var GameSchema = mongoose.Schema({
 	name: String,
-	player1: {type: ObjectId, ref: 'Player'},
-	player2: {type: ObjectId, ref: 'Player'},
+	//player1: {type: ObjectId, ref: 'Player'},
+	//player2: {type: ObjectId, ref: 'Player'},
+	player1: Object,
+	player2: Object,
 	rounds: {type: Array, default : [] },
 	currentHand: String, //jugador
-	currentRound: {type: ObjectId, ref: 'Round'},
-	score: {type: Array, default : [0,0] }
+	//currentRound: {type: ObjectId, ref: 'Round'},
+	currentRound : Object,
+	score: {type: Array, default : [0,0] },
+
 });
+
+GameSchema.methods.newRound = function(){
+   var round = new Round(this, this.currentHand);
+   this.currentRound = round;
+   this.currentHand = switchPlayer(this.currentHand);
+   this.rounds.push(round);
+	 console.log("Crea ronda " + this.rounds + " ronda " + this.currentRound.status);
+	this.save();
+   return this;
+ }
+
 
 var Game = mongoose.model('Game', GameSchema);
  /*
@@ -49,14 +64,23 @@ var Game = mongoose.model('Game', GameSchema);
  /*
   * Create and return a new Round to this game
   */
- Game.prototype.newRound = function(){
+ /*Game.prototype.newRound = function(){
    var round = new Round(this, this.currentHand);
    this.currentRound = round;
    this.currentHand = switchPlayer(this.currentHand);
    this.rounds.push(round);
+	 console.log("Crea ronda " + this.rounds + " ronda " + round);
    return this;
- }
- 
+ }*/
+/*
+ GameSchema.methods.newRound = function(){
+   var round = new Round(this, this.currentHand);
+   this.currentRound = round;
+   this.currentHand = switchPlayer(this.currentHand);
+   this.rounds.push(round);
+	 console.log("Crea ronda " + this.rounds + " ronda " + round);
+   return this;
+ }*/
  /*
   * returns the oposite player
   */

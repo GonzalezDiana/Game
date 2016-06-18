@@ -42,7 +42,7 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser())
 
 // mongoose
-//mongoose.connect('mongodb://localhost/Game');
+mongoose.connect('mongodb://localhost/Game');
 
 
 // catch 404 and forward to error handler

@@ -6,6 +6,8 @@ var cardModel   = require("../models/card");
 var Game = gameModel.game;
 var Player = playerModel.player;
 var Card = cardModel.card;
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/Game_test');
 
 describe('Game', function(done){
 //Guarda en mongoose
@@ -34,13 +36,13 @@ describe('Game', function(done){
 		});
 	});   
 
- /* it('#save Diana', function(done){
+  it('#save Diana', function(done){
 		var p = new Player({name: 'Diana'});
 		
 	  p.save(function(err, player){
       console.log("saved player...");
 			console.log(err);
-      console.log(player.toString());
+      console.log(player.name);//toString());
 
       if (err) { 
         console.log(err);
@@ -60,23 +62,23 @@ describe('Game', function(done){
 
 
 	it('#recovering', function(done){
-    Game.findOne({_id: "575ad763c68fa3ed119e18b5"}).exec(function(err, game){
+    Game.findOne({name: "juego 2"}).exec(function(err, game){ //{_id: "575ad763c68fa3ed119e18b5"}).exec(function(err, game){
         console.log("Recovering ref");
         console.log(err);
         console.log(game.toString());
         //console.log(game.player1.toString());
         done();
       });
-  }); */ 
+  });  
 
- /* it('#updating', function(done){
+ /*it('#updating', function(done){
     Game.findOne({name: 'El juego de tu vida'}).exec(function(err, game){
       console.log("encontre el juego");
       console.log(game.toString());
 
       Player.findOne({name: "juan"}).exec(function(err, player){
+				 console.log(player.name);
         console.log("Encontre a juan");
-        console.log(player);
         console.log(player._id);
         game.player1 = player._id;
 
