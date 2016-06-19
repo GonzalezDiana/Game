@@ -10,16 +10,11 @@ var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/Game_test');
 
 describe('Game', function(done){
-//Guarda en mongoose
-	it('#save El juego de tu vida', function(done){
+	it('#save El juego de tu vida y jugador Juan.', function(done){
 		var g = new Game({name: 'El juego de tu vida'});
-		console.log(g.player1);
-
 		g.save(function(err, game){
-      console.log("saved game...");
-			console.log(err);
-      console.log(game.toString());
-
+      console.log("Saved game El juego de tu vida.");
+      //console.log(game.toString());
       if (err) { 
         console.log(err);
 				done(err);
@@ -28,32 +23,33 @@ describe('Game', function(done){
       var p = new Player({name: "Juan", currentGame: game});
 
       p.save(function(err, player){
-         console.log("saving player");
-         console.log(player.name);
+      	console.log("Saving player Juan.");
+				if (err) { 
+					console.log(err);
+					done(err);
+      	}
+        //console.log(player.name);
       });
- 
       done();
 		});
 	});   
 
-  it('#save Diana', function(done){
+  it('#save Tutatuta y jugador Diana.', function(done){
 		var p = new Player({name: 'Diana'});
 		
 	  p.save(function(err, player){
-      console.log("saved player...");
-			console.log(err);
-      console.log(player.name);//toString());
-
+      console.log("Saved player Diana.");
       if (err) { 
         console.log(err);
 				done(err);
       }
+			//console.log(player.name);
 
-      var g = new Game({name: "juego 2", player1: player});
+      var g = new Game({name: "tutatuta", player1: player});
 
       g.save(function(err, game){
-         console.log("saving game");
-         console.log(game.toString());
+         console.log("saving game tutatuta");
+         //console.log(game.toString());
       });
  
       done();
@@ -61,39 +57,129 @@ describe('Game', function(done){
 	}); 
 
 
-	it('#recovering', function(done){
-    Game.findOne({name: "juego 2"}).exec(function(err, game){ //{_id: "575ad763c68fa3ed119e18b5"}).exec(function(err, game){
+	it('#recovering El juego de tu vida.', function(done){
+    Game.findOne({name: "El juego de tu vida"}).exec(function(err, game){ 
         console.log("Recovering ref");
-        console.log(err);
-        console.log(game.toString());
-        //console.log(game.player1.toString());
+				if (err) { 
+        	console.log(err);
+					done(err);
+      	}
+       // console.log(game.toString());
         done();
-      });
+    });
   });  
 
- /*it('#updating', function(done){
-    Game.findOne({name: 'El juego de tu vida'}).exec(function(err, game){
-      console.log("encontre el juego");
-      console.log(game.toString());
+	it('should have two players', function(done){
 
-      Player.findOne({name: "juan"}).exec(function(err, player){
-				 console.log(player.name);
-        console.log("Encontre a juan");
-        console.log(player._id);
-        game.player1 = player._id;
+    var cardsjug1 = [new Card(2,'oro'), new Card(7,'oro'),new Card(3,'basto')];
+    var cardsjug2 = [new Card(5,'basto'), new Card(1,'espada'), new Card(3,'espada')];
+    var jug1 = new Player({name: "Juan", password:"3876", cards: cardsjug1, envidoPoints: 29});
+    var jug2 = new Player({name: "Diana", password:"1234", cards: cardsjug2, envidoPoints: 24});
+    
+    jug1.save(function (err,player1){
+      if(err){
+        console.log(err);
+        done(err)
+      }
 
-        game.save(function(err, g){
-          console.log("Setting ref");
+      jug2.save(function (err,player2){
+        if(err){
           console.log(err);
-          console.log(game.toString());
-          done();
-        });
-        done();
-      });
-     done();
-    });
-  }); */
+          done(err)
+        }
+        var data = {
+          name : 'Truco argentino',
+          player1: player1,
+          player2: player2,
+          rounds : [],
+          currentHand: player2,
+          currentRound : undefined,
+          score : [0,0]
+        };
 
+        var g = new Game(data);
+
+        g.save(function (err, game) {
+          if(err){
+            console.log(err);
+            done(err)
+          }
+          
+					//recuperamos el jugador 2 - Diana
+          Game.findOne({player2:player2._id},function(err,result){
+            if (err) {
+              console.log(err);
+              done(err);
+            }
+            Player.findOne({_id:player2._id} , function(err, result2){ 
+              expect(result2.name).to.be.eq('Diana');
+							//console.log(result2.name);
+              done();
+
+            }); 
+          });
+
+        });
+      });
+    });
+	}); 
+}); //end test
+
+
+
+
+// ----------------------------------------- TEST ANTERIOR ----------------------------------------------
+/*describe('Game', function(){
+	var game = new Game();
+	it('Should have two players', function(){
+		expect(game).to.have.property('player1');
+		expect(game).to.have.property('player2');
+	});
 });
 
+describe('Game#play', function(){
+	var game;
+	beforeEach(function(){
+		game = new Game();
+		game.newRound();
+		// Force to have the following cards and envidoPoints
+		game.player1.setCards([
+			new Card(1, 'copa'),
+			new Card(7, 'oro'),
+			new Card(2, 'oro')
+		]);
 
+		game.player2.setCards([
+ 			new Card(1, 'copa'),
+			new Card(7, 'copa'),
+			new Card(2, 'basto')
+		]);
+	});
+	
+	it('plays [envido, quiero] should gives 2 points to winner', function(){
+		game.play('player1', 'envido');
+		game.play('player2', 'quiero');
+		expect(game.score).to.deep.equal([2, 0]);
+	});
+
+	it('plays [envido, no-quiero] should gives 1 points to player 1', function(){
+		game.play('player1', 'envido');
+		game.play('player2', 'no-quiero');
+		expect(game.score).to.deep.equal([1, 0]);
+	});
+
+	//el jugador uno canta truco
+	it('plays [truco, no-quiero] should gives 1 points to player1', function(){
+		game.play('player1', 'truco');
+		game.play('player2', 'no-quiero');
+		expect(game.score).to.deep.equal([1,0]); 
+	}); 
+
+	//el jugador uno juega una carta y el jugador dos canta truco
+	it('plays [truco, no-quiero] should gives 1 points to player2', function(){
+		game.play('player1', 'playcard', game.player1.cards[0]);		
+		game.play('player2', 'truco');
+		game.play('player1', 'no-quiero');
+		expect(game.score).to.deep.equal([0,1]); 
+	}); 
+}); */

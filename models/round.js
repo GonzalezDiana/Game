@@ -1,18 +1,17 @@
-/*
-*
-* Represents a game's round
-*
-* @param gmae [Object]: game where the round belongs
-*
-*/
-
 var _ = require('lodash');
-var StateMachine = require("../node_modules/javascript-state-machine/state-machine.js");
-var deckModel = require("./deck");
-var cardModel = require("./card");
-
-var Deck  = deckModel.deck;
+var mongoose = require("mongoose");
+var deckModel = require("./deck.js");
+var gameModel = require("./game.js");
+var cardModel = require("./card.js");
+var playerModel = require("./player.js");
+var Deck = deckModel.deck;
+var Game = gameModel.game;
 var Card = cardModel.card;
+var Player = playerModel.player;
+
+//StateMachine
+var StateMachine = require("../node_modules/javascript-state-machine/state-machine.js");
+
 
 function newTrucoFSM(){
 	var fsm = StateMachine.create({
@@ -30,41 +29,16 @@ function newTrucoFSM(){
 }
 
 function Round(game, turn){
-/*
-* Game
-*/
-	this.game = game;
-/*
-* next turn
-*/
-	this.currentTurn = turn;
-
-/*
-* here is a FSM to perform user's actions
-*/
+	//----
+	this.game = {_id:game._id,player1:game.player1,player2:game.player2,currentHand:game.currentHand,__proto__:game.__proto__};
 	this.fsm = newTrucoFSM();
-
-/*
-*
-*/
 	this.status = 'running';
-
-/*
-*Manos jugadas y ganadas por los jugadores 
-*/
-	this.arregloManos = [];
-
-/*
- * Round' score
- */
+	this.arregloManos = []; //Manos jugadas y ganadas por los jugadores 
 	this.score = [0, 0];
-
 	this.prevstate=null;
-
 	this.puntostruco=1;
-
-//Reparto Cartas
-	this.deal();
+	this.deal(); //Reparto Cartas
+	this.currentTurn = this.game.switchPlayer(turn) ;
 
 }
 
@@ -95,8 +69,14 @@ Round.prototype.changeTurn = function(){
 /*(this.arregloManos (1,1)
 * returns the oposite player
 */
-Round.prototype.switchPlayer = function(player) {
-	return "player1" === player ? "player2" : "player1";
+Round.prototype.switchPlayer = function (player){
+  if (player.name === this.player1.name){
+  	player = this.player2;
+  }
+  else{
+  	player = this.player1;
+  }
+  return player;
 };
 
 Round.prototype.calculateScore = function(action){
@@ -176,6 +156,7 @@ Round.prototype.tirarCarta = function (player,card){
 	}	
 }
 
+//Nos indica si un jugador tiro todas las cartas.
 Round.prototype.tiroTodas = function (player){
 	aux = false;	
 	if((player.cards[0] == undefined) && (player.cards[1] == undefined) && (player.cards[2] == undefined)){

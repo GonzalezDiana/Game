@@ -16,16 +16,18 @@ var PlayerSchema = mongoose.Schema({
   currentGame: {type: Number, ref: 'Game' }
 });
 
-var Player = mongoose.model('Player', PlayerSchema); 
-
-Player.prototype.setCards = function(cards){
+PlayerSchema.methods.setCards = function(cards){
 	this.cards = cards;
 	this.envidoPoints = this.points();
 }
 
 //Points
-Player.prototype.points = function(){
-	return Math.max(this.cards[0].puntos(this.cards[1]), this.cards[0].puntos(this.cards[2]), this.cards[1].puntos(this.cards[2]));
+PlayerSchema.methods.points = function(){
+  return Math.max(this.cards[0].puntos(this.cards[1]), this.cards[0].puntos(this.cards[2]), this.cards[1].puntos(this.cards[2]));
 };
 
+
+var Player = mongoose.model('Player', PlayerSchema); 
+
 module.exports.player = Player;
+module.exports.playerSchema = PlayerSchema;

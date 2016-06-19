@@ -5,29 +5,26 @@ var deckModel = require('./deck');
 var cardModel = require('./card');
 var roundModel = require('./round');
 
+var Player = playerModel.player;
+var PlayerSchema = playerModel.playerSchema;
+var Round  = roundModel.round;
+
 /** MONGOOSE **/
 var mongoose = require('mongoose');
 var db= mongoose.createConnection('mongodb://localhost/Game');
 
 db.on('error', console.error.bind(console, 'conection error'));
 db.once('open', function(){
-	console.log('We are connected!!!');
+	console.log('¡WE ARE CONNECTED!');
 });
 
-//db.game.remove();
-
-var Player = playerModel.player;
-var Round  = roundModel.round;
-
-var ObjectId = mongoose.Schema.Types.ObjectId; //Para jugadores
+//var ObjectId = mongoose.Schema.Types.ObjectId; 
 
 /*Definimos el esquema de nuestro juego*/
 var GameSchema = mongoose.Schema({
 	name: String,
-	//player1: {type: ObjectId, ref: 'Player'},
-	//player2: {type: ObjectId, ref: 'Player'},
-	player1: Object,
-	player2: Object,
+	player1: PlayerSchema,
+	player2: PlayerSchema,
 	rounds: {type: Array, default : [] },
 	currentHand: String, //jugador
 	//currentRound: {type: ObjectId, ref: 'Round'},
@@ -39,10 +36,8 @@ var GameSchema = mongoose.Schema({
 GameSchema.methods.newRound = function(){
    var round = new Round(this, this.currentHand);
    this.currentRound = round;
-   this.currentHand = switchPlayer(this.currentHand);
-   this.rounds.push(round);
-	 console.log("Crea ronda " + this.rounds + " ronda " + this.currentRound.status);
-	this.save();
+   this.currentHand = this.switchPlayer(this.currentHand);
+   //this.rounds.push(round);
    return this;
  }
 
@@ -72,21 +67,22 @@ var Game = mongoose.model('Game', GameSchema);
 	 console.log("Crea ronda " + this.rounds + " ronda " + round);
    return this;
  }*/
-/*
- GameSchema.methods.newRound = function(){
-   var round = new Round(this, this.currentHand);
-   this.currentRound = round;
-   this.currentHand = switchPlayer(this.currentHand);
-   this.rounds.push(round);
-	 console.log("Crea ronda " + this.rounds + " ronda " + round);
-   return this;
- }*/
+
  /*
   * returns the oposite player
   */
- function switchPlayer(player) {
-   return "player1" === player ? "player2" : "player1";
- };
+
+//returns the oposite player
+Game.prototype.switchPlayer = function (player) {
+  if (player == this.player1.name){
+  	player = this.player2;
+  }
+  else{
+  	player = this.player1;
+  }
+  return player;
+};
+
  
 Game.prototype.pointWin = function(){
 	if (this.player1.points() > this.player2.points()){

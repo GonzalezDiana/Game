@@ -12,45 +12,97 @@ var Game = gameModel.game;
 describe('Player', function(){
 	var player1 = new Player({name: 'Juan'});
 	var player2 = new Player({name: 'Emma Watson'});
+
 	it('Should have a name', function(){
 		expect(player1).to.have.property('name');
 		expect(player2).to.have.property('name');
 	});
 
-	//Guarda en mongoose
-	/*it('#save Juan', function(done){
-		var data = {
-			name: 'Juan',
-			cards: [new Card(1,'espada')],
-			envidoPoints:28,
-			cartasJugadas: []
+	it('should save Juan', function(done){
+		var data={
+			name: "Juan",
+			password:"6899",
+			cards: [new Card(1,'basto'),new Card(7,'basto'),new Card(3,'oro')],
+			pointsEnv: 28
 		}
 		var p = new Player(data);
-		var callback = function (err, Player){ //El save ejecuta la funcion que le pasamos como parametro (que recibe error y data)
-			if (err)
+		p.save(function (err, player) {
+			if(err){
+				console.log(err);
 				done(err);
-			expect(player1.name).to.be.eq(data.name);
-			done();
-		};
-		p.save(callback);
+			}
+			Player.findOne({name:p.name},function(err,result){
+				if (err) {
+					console.log(err);
+					done(err);
+				}
+				expect(result.name).to.be.eq('Juan');
+				done();
+			});
+		});
 	});
 
 	it('Should recover info', function(done){
     Player.findOne({name: 'Juan'}).exec(function(err, player){
-      console.log("encontre el jugador Juan");
-      console.log(player.name);
+			if (err) {
+					console.log(err);
+					done(err);
+			}
+      //console.log("Encontre el jugador Juan");
+      //console.log(player.name);
 			done();
 		});
-	}); */
+	}); 
+}); //end Describe Player
 
-});
+// Envido Points
+describe ('Puntos del Envido', function(){
+	it('31 puntos',function(){
+		var aux = [new Card(6,'copa'), new Card(5,'copa'), new Card(12,'oro')];
+		var p=new Player ({name:"Juan", password:"1995", cards: aux});
+		expect(p.points()).to.be.equal(31);
+	});
+
+	it('30 puntos',function(){
+		var cartas = [new Card(3,'oro'),new Card(7,'oro'),new Card(11,'basto')];
+		var p=new Player ({name:"Juan", password:"1995", cards: cartas});
+		expect(p.points()).to.be.equal(30);
+	});
+
+	it('28 puntos',function(){
+		var cartas = [new Card(7,'espada'), new Card(1,'espada'), new Card(5,'basto')];
+		var p=new Player ({name:"Juan", password:"1995", cards: cartas});
+		expect(p.points()).to.be.equal(28);
+	});
+
+	it('27 puntos',function(){
+		var cartas = [new Card(4,'oro'), new Card(3,'oro'), new Card(5,'basto')];
+		var p=new Player ({name:"Juan", password:"1995", cards: cartas});
+		expect(p.points()).to.be.equal(27);
+	});
+
+	it('20 puntos',function(){
+		var cartas = [new Card(11,'basto'), new Card(10,'basto'), new Card(7,'espada')];
+		var p=new Player ({name:"Juan", password:"1995", cards: cartas});
+		expect(p.points()).to.be.equal(20);
+	});
+
+	it('7 puntos',function(){
+		var cartas = [new Card(7,'espada'), new Card(12,'oro'), new Card(3,'copa')];
+		var p=new Player ({name:"Juan", password:"1995", cards: cartas});
+		expect(p.points()).to.be.equal(7);
+	});
+
+	it('0 puntos',function(){
+		var cartas = [new Card(12,'basto'), new Card(11,'oro'), new Card(10,'espada')];
+		var p=new Player ({name:"Juan", password:"1995", cards:cartas});
+		expect(p.points()).to.be.equal(0);
+	});
+});// end describe envido
 
 
 
-
-
-
-//-------------------------------------------------------------------------------------------------------------
+//------------------------------------------------- TEST ANTERIORES ------------------------------------------------------------
 	//controls the amount of points
 /*	describe('Points', function() {		
 		var game = new Game();
