@@ -1,14 +1,43 @@
 var expect = require("chai").expect;
-var card_model   = require("../models/card");
-var player_model = require("../models/player");
-var game_model   = require("../models/game");
-var round_model   = require("../models/round");
+var roundModel = require("../models/round.js");
+var gameModel = require("../models/game.js");
+var playerModel = require("../models/player.js");
+var cardModel = require("../models/card.js");
 
-var Game  = game_model.game;
-var Round = round_model.round;
-var Card = card_model.card;
-var Player = player_model.player;
+var Round = roundModel.round;
+var Game = gameModel.game;
+var Player = playerModel.player;
+var Card = cardModel.card;
 
+describe('Round',function(){
+  var cartasjug1 = [new Card(3,'basto'),new Card(7,'basto'),new Card(3,'copa')];
+  var cartasjug2 = [new Card(6,'copa'),new Card(5,'copa'),new Card(7,'basto')];
+  var j1 = new Player({name: "Juan", password:"1995", cards: cartasjug1 , pointsEnv: 30});
+  var j2 = new Player({name: "Diana", password:"1993", cards: cartasjug2 , pointsEnv: 31});
+	//definimos el nuevo juego con los jugadores anteriores
+  var g = new Game({name:'El juego de tu vida', player1: j1, player2: j2, currentHand: j2, currentRound: undefined, score: [0,0]});
+	//guardamos
+  g.save(function (err, game) {
+    if(err){
+      console.log(err);
+      done(err)
+    }
+		//creamos una ronda
+    g.newRound();
+    it('player1 should have 3 cards', function(){
+     expect(g.player1.cards).to.have.lengthOf(3);
+    });
+  
+    it('player2 should have 3 cards', function(){
+      expect(g.player2.cards).to.have.lengthOf(3);
+    });
+  });
+}); //end describe
+
+
+
+
+//------------------------------------------------------- TEST ANTERIORES ---------------------
 /*describe('Round', function(){
 	var game;
 	beforeEach(function(){
