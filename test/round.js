@@ -103,29 +103,61 @@ describe('Round',function(){
 
 }); 
 
-/*describe('Round#onplaycard', function(){
+describe('Round -- Controlamos funciones nuevas', function(){
 	var game;
 	beforeEach(function(){
 		game = new Game();
 		game.newRound();
+
 		// Force to have the following cards and envidoPoints
 		game.player1.setCards([
-			new Card(1, 'copa'),
-			new Card(7, 'oro'),
-			new Card(2, 'oro')
+			new Card(6, 'oro'),
+			new Card(7, 'basto'),
+			new Card(1, 'oro')
 		]);
-
 		game.player2.setCards([
  			new Card(6, 'copa'),
 			new Card(7, 'copa'),
-			new Card(2, 'basto')
+			new Card(1, 'basto')
 		]);
 	});
-	 
-	it('plays [envido, no-quiero] should gives 1 points to player 1', function(){
-		game.play('player1', 'envido');
-		game.play('player2', 'no-quiero');
-		expect(game.score).to.deep.equal([1, 0]);
+
+	it('play a card', function(){
+		//console.log(game.currentRound.fsm.current);
+		//game.currentRound.fsm.current = 'init';
+		//game.play(game.currentRound.game.player1, 'envido');
+		//console.log(game.currentRound.changeTurn());
+		//console.log(game.currentRound.currentTurn);
+		//console.log(game.currentRound.arregloManos);
+		//console.log(game.currentRound.game.score);
+		//console.log(game.currentRound.game.player1.cartasJugadas);
+		//console.log(game.currentRound.game.player2.cartasJugadas);
+		game.play(game.currentRound.game.player1, 'playcard',game.currentRound.game.player1.cards[1]);	
+		console.log(game.currentRound.game.player1);
+		
+		//console.log('mostrar cartas jugadas, jugador 2: ',game.currentRound.game.player2.cartasJugadas);
+		//console.log(game.currentRound.fsm.current);
+		//console.log(game.currentRound.currentTurn);
+		//console.log(game.currentRound.game.player1);
+		game.play(game.currentRound.game.player2, 'truco');
+		//console.log(game.currentRound.game.player2.cartasJugadas);	
+		//console.log(game.currentRound.game.player2);
+		//console.log(game.currentRound.arregloManos);
+		game.play(game.currentRound.game.player1, 'quiero');
+		game.play(game.currentRound.game.player2, 'playcard',game.currentRound.game.player2.cards[1]);
+		//console.log(game.currentRound.game.player1.cartasJugadas);
+		//console.log(game.currentRound.game.player2.cartasJugadas);
+
+		//console.log(game.currentRound.hayGanador());
+		game.play(game.currentRound.game.player1, 'playcard',game.currentRound.game.player1.cards[2]);
+		game.play(game.currentRound.game.player2, 'playcard',game.currentRound.game.player2.cards[2]);
+		//console.log(game.currentRound.game.player1);
+		//console.log(game.currentRound.game.player2);	
+		console.log(game.currentRound.arregloManos);	
+		console.log(game.currentRound.hayGanador());
+		console.log(game.currentRound.game.score);	
+		});
 	});
 }); */
+
 

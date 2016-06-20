@@ -156,12 +156,6 @@ describe('Game#play', function(){
 		]);
 	});
 	
-	it('plays [envido, quiero] should gives 2 points to winner', function(){
-		game.play('player1', 'envido');
-		game.play('player2', 'quiero');
-		expect(game.score).to.deep.equal([2, 0]);
-	});
-
 	it('plays [envido, no-quiero] should gives 1 points to player 1', function(){
 		game.play('player1', 'envido');
 		game.play('player2', 'no-quiero');

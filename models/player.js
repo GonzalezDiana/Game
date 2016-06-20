@@ -16,12 +16,13 @@ var PlayerSchema = mongoose.Schema({
   currentGame: {type: Number, ref: 'Game' }
 });
 
+//Asigna cartas a los jugadores y calcula sus puntos del envido.
 PlayerSchema.methods.setCards = function(cards){
 	this.cards = cards;
 	this.envidoPoints = this.points();
 }
 
-//Points
+//Envido Points
 PlayerSchema.methods.points = function(){
   return Math.max(this.cards[0].puntos(this.cards[1]), this.cards[0].puntos(this.cards[2]), this.cards[1].puntos(this.cards[2]));
 };

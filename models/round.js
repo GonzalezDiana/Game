@@ -29,7 +29,7 @@ function newTrucoFSM(){
 }
 
 function Round(game, turn){
-	//----
+	//- ESTO HABRÍA QUE MEJORARLO PORQUE ENTRA EN BUCLE :( ---
 	this.game = {_id:game._id,player1:game.player1,player2:game.player2,currentHand:game.currentHand,__proto__:game.__proto__};
 	this.fsm = newTrucoFSM();
 	this.status = 'running';
@@ -39,7 +39,6 @@ function Round(game, turn){
 	this.puntostruco=1;
 	this.deal(); //Reparto Cartas
 	this.currentTurn = this.game.switchPlayer(turn) ;
-
 }
 
 /*
@@ -51,24 +50,21 @@ Round.prototype.deal = function(){
 	this.game.player2.setCards(_.pullAt(deck, 1, 3, 5));
 };
 
-/*
-* Calculates who is the next player to play.
-*
-* + if action is 'quiero' or 'no-quiero' and it's playing 'envido' the next
+/* Cambia el turno de los jugadores. DEBERÍAMOS VER CASOS MÁS CONCRETOS
++ if action is 'quiero' or 'no-quiero' and it's playing 'envido' the next
 * player to play is who start to chant
 *
 * + if action is 'quiero' or 'no-quiero' and it's playing 'envido' the next
-* player to play is who start to chant
-*
-* ToDo
-*/
+* player to play is who start to chant */
 Round.prototype.changeTurn = function(){
-	return this.currentTurn = this.switchPlayer(this.currentTurn);
+	//return this.currentTurn = this.switchPlayer(this.currentTurn);
+	if (this.currentTurn == this.game.player1)
+		return this.currentTurn = this.game.player2;
+	else
+		return this.currentTurn = this.game.player1;
 }
 
-/*(this.arregloManos (1,1)
-* returns the oposite player
-*/
+//Cambia el jugador corriente. 
 Round.prototype.switchPlayer = function (player){
   if (player.name === this.player1.name){
   	player = this.player2;
@@ -79,56 +75,56 @@ Round.prototype.switchPlayer = function (player){
   return player;
 };
 
+//Verifica si debe tratar el puntaje
 Round.prototype.calculateScore = function(action){
-	//console.log(this.fsm.current);
-	if((action == 'quiero' || action == 'no-quiero')&&(this.prevstate == 'envido')){
-		if (action == 'quiero') {			
-			if( this.game.pointWin() == this.game.player1 ){
-				
-				this.score = [2, 0];
-				this.game.score[0] += this.score[0];
-				this.game.score[1] += this.score[1];
+	//Si el estado previo es 'envido'
+	if(this.prevstate == 'envido'){
+		//Si el estado actual 'quiero'
+		if (action == 'quiero') {		
+			//Chequea quien gana los puntos	
+			if( this.game.pointWin() == this.game.player1 ){ //gana el jugador 1
+				this.score = [2, 0]; //le asignamos dos puntos en la ronda al jugador 1 
 			}
-			else{
-				this.score = [0, 2];
-				this.game.score[0] += this.score[0];
-				this.game.score[1] += this.score[1];
+			else{ //gana el jugador 2
+				this.score = [0, 2]; // le asignamos dos puntos en la ronda al jugador 2
 			}
 		}
-		//si player 1 dice no quiero, etonces los puntos son para el player 2(Falta saber quien canto envido para sumarle el punto)
-		else {
-			if (this.currentTurn == this.game.player2){
-				this.score = [0, 1];
-				this.game.score[0] += this.score[0];
-				this.game.score[1] += this.score[1];
+		//Si el estado actual 'noquiero'
+		else { 
+			//Si jugador corriente es el jugador 2
+			if (this.currentTurn == this.game.player2){ 
+				this.score = [1, 0]; //le asignamos un punto en la ronda al jugador 1
 			}
-			else
-				
-					this.score = [1, 0];
-					this.game.score[0] += this.score[0];
-					this.game.score[1] += this.score[1];
+			//Si jugador corriente es el jugador 1
+			else{	
+				this.score = [0, 1]; //le asignamos un punto en la ronda al jugador 2
 			}
-	}
+		}
+	} //fin del caso envido
 	else{
-		if((action == 'quiero' || action == 'no-quiero')&&(this.prevstate == 'truco')){
+		//Si el estado previo es 'truco'
+		if(this.prevstate == 'truco'){
+			//Si el estado actual 'quiero'
 			if (action == 'quiero'){
-				this.puntostruco+=1;
+				this.puntostruco+=1; //
 			}
-			else{
-				if (this.currentTurn == this.game.player2.name){
-					this.score = [1, 0];
-					this.game.score[0] += this.score[0];
-					this.game.score[1] += this.score[1];
+			//Si el estado actual 'noquiero'
+			else{ 
+				//Si el jugador corriente es el jugador 2	
+				if (this.currentTurn == this.game.player2){
+					this.score = [1, 0]; //un punto para el jugador uno
 				}
-				else{
-					this.score = [0, 1];
-					this.game.score[0] += this.score[0];
-					this.game.score[1] += this.score[1];
+				//Si el jugador corriente es el jugador 1
+				else{ 	
+					this.score = [0, 1]; //un punto para el jugador 2
 				}
 			}
 		}	
-	}
-  return this.score;
+	} //fin del caso truco
+	//Actualizamos el score del juego.
+	this.game.score[0] += this.score[0];
+	this.game.score[1] += this.score[1];
+	return this.score;
 }
 
 //Inserto la carta en el arreglo de las cartas sobre la mesa(cartas jugadas)
@@ -146,7 +142,6 @@ Round.prototype.tirarCarta = function (player,card){
 		return this.game.player;
 	}
 	if (player.cards[1] == card){
-		//console.log(this.cartasJugadas);
 		player.cards[1] = undefined;
 		return this.game.player;
 	}
@@ -165,88 +160,135 @@ Round.prototype.tiroTodas = function (player){
 	return aux;
 }
 
-Round.prototype.confrontaciones = function (){
-	//Verifica que haya 2 cartas en juego para 	
-	if ((this.game.player1.cartasJugadas[0] !== undefined) && (this.game.player2.cartasJugadas[0] !== undefined)){
-		//No se como llamar a confrontacion		
-		//Todavia no evalue la posibilidad de empate.. 
+//Verifica que puede realizar una confrontacion y carga un arreglo con su respectivo ganador o empate
+Round.prototype.confrontaciones = function (){	
+	//Verifica ambos jugadores jugaron una carta 
+	if (((this.game.player1.cartasJugadas[0] !== undefined) && (this.game.player2.cartasJugadas[0] !== undefined)) && (this.arregloManos[0] == undefined))
 		if ((this.game.player1.cartasJugadas[0].confront(this.game.player2.cartasJugadas[0])) == 1)
-			//Si gano el jugador 1 en la confrontacion
 			return this.arregloManos.push(1);		
-		else
-			//Si gano el jugador 2 en la confrontacion			
-			return this.arregloManos.push(2);
-	}
-	//Lo mismso para el resto...
-	if ((this.game.player1.cartasJugadas[1] !== undefined) && (this.game.player2.cartasJugadas[1] !== undefined)){
-		//No se como llamar a confrontacion		
+		else 
+			if ((this.game.player1.cartasJugadas[0].confront(this.game.player2.cartasJugadas[0])) == -1) 		
+				return this.arregloManos.push(2);
+			else	
+				return this.arregloManos.push(0);
+
+	//Verifica ambos jugadores jugaron dos cartas 
+	if (((this.game.player1.cartasJugadas[1] !== undefined) && (this.game.player2.cartasJugadas[1] !== undefined)) && (this.arregloManos[1] == undefined)) 	
 		if ((this.game.player1.cartasJugadas[1].confront(this.game.player2.cartasJugadas[1])) == 1)
-			//Si gano el jugador 1 en la confrontacion
 			return this.arregloManos.push(1);		
 		else
-			//Si gano el jugador 2 en la confrontacion			
-			return this.arregloManos.push(2);
-	}	
-	if ((this.game.player1.cartasJugadas[2] !== undefined) && (this.game.player2.cartasJugadas[2] !== undefined)){
-		//No se como llamar a confrontacion		
+			if ((this.game.player1.cartasJugadas[1].confront(this.game.player2.cartasJugadas[1])) == -1) 		
+				return this.arregloManos.push(2);
+			else
+				return this.arregloManos.push(0);
+	
+	//Verifica ambos jugadores jugaron 3 cartas
+	if (((this.game.player1.cartasJugadas[2] !== undefined) && (this.game.player2.cartasJugadas[2] !== undefined)) && (this.arregloManos[2] == undefined))	
 		if ((this.game.player1.cartasJugadas[2].confront(this.game.player2.cartasJugadas[2])) == 1)
-			//Si gano el jugador 1 en la confrontacion
 			return this.arregloManos.push(1);		
-		else
-			//Si gano el jugador 2 en la confrontacion			
-			return this.arregloManos.push(2);
-	}
+		else	
+			if ((this.game.player1.cartasJugadas[2].confront(this.game.player2.cartasJugadas[2])) == -1)	
+				return this.arregloManos.push(2);
+			else
+				return this.arregloManos.push(0);
 }
 
+//Verifica juega una carta y realiza un tratamiento en la ronda
 Round.prototype.played = function (action, card){
-	if(action = 'playcard') 
+	//Si el estado actual es 'playcard'
+	if(action == 'playcard'){
+		//Si el estado previo es 'init'
 		if(this.prevstate == 'init')
+			/*Si el jugador corriente es el jugador 1
+			* guarda card en el arreglo de las cartas jugadas del jugador corriente
+			* tira card de las cartas del jugador corriente
+			*/
 			if (this.currentTurn == this.game.player1){
-				this.guardarCarta(this.game.player1, card);
-				this.tirarCarta(this.game.player1, card);
+				this.guardarCarta(this.game.player1, card); 
+				this.tirarCarta(this.game.player1, card); 
 				return this.game.player1;
-			}
-			else{
+			//Si el jugador corriente es el jugador 2, realiza el mismo tratamiento
+			}else{
 				this.guardarCarta(this.game.player2, card);
 				this.tirarCarta(this.game.player2, card);
 				return this.game.player2;
-			}		
-	
-		else if((this.prevstate == 'quiero') || (this.prevstate == 'no-quiero') || (this.prevstate == 'playcard')) 
+		//Si el estado previo es 'quiero', 'noquiero', 'playcard', 'primer carta'
+		}else if((this.prevstate == 'quiero') || (this.prevstate == 'no-quiero') || (this.prevstate == 'playcard') || (this.prevstate == 'primer carta')) 			
+			//Si el jugador corriente es el jugador 1				
 			if (this.currentTurn == this.game.player1){
+				//Si el jugador corriente no tiro todas las cartas
 				if (this.tiroTodas(this.game.player1) == false){
+					/*guarda card en el arreglo de las cartas jugadas del jugador corriente
+					* tira card de las cartas del jugador corriente
+					*/
 					this.guardarCarta(this.game.player1, card);
 					this.tirarCarta(this.game.player1, card);
-				}
-				else 
+				//Devuelve un error ya que no hay mas cartas para jugar
+				}else
 					throw new Error("Se jugaron todas las cartas no puede volver a tirar.");
 				return this.game.player1;
-			}
-			else{
+			//Si el jugador corriente es el jugador 2, realiza el mismo tratamiento
+			}else{	
 				if (this.tiroTodas(this.game.player2) == false){
-					this.guardarCarta(this.game.player1, card);
-					this.tirarCarta(this.game.player1, card);
-				}
-				else
+					this.guardarCarta(this.game.player2, card);
+					this.tirarCarta(this.game.player2, card);
+				}else
 					throw new Error("Se jugaron todas las cartas no puede volver a tirar.");
-				return this.game.player1;
+				return this.game.player2;
 			}		
+	}
 }
 
-Round.prototype.hayGanador = function (){	
-	aux = 0;	
-	if ((this.arregloManos == [1,1]) || (this.arregloManos == [1,2,1]) || (this.arregloManos == [2,1,1]))
-		aux = 1;
-	if ((this.arregloManos == [2,2]) || (this.arregloManos == [2,1,2]) || (this.arregloManos == [1,2,2]))
-		aux = 2; 
+//Compara caracter por caracter 2 arreglos segun su tamaño
+function compAr(arreglo, arreglo0){
+	aux = false;
+	if (arreglo.length == 2){
+		if ((arreglo[0] == arreglo0[0]) && (arreglo[1] == arreglo0[1])){
+			aux = true;
+		}	
+	}
+	if (arreglo.length == 3){
+		if ((arreglo[0] == arreglo0[0]) && (arreglo[1] == arreglo0[1]) && (arreglo[2] == arreglo0[2])){
+			aux = true;
+		}	
+	}
 	return aux;
 }
 
+//Devuelve un valor booleano: True=Hay ganador, False=No hay ganador
+Round.prototype.hayGanador = function (){
+	var aux = false;
+
+	if ((compAr(this.arregloManos,[0,0,0])) || (compAr(this.arregloManos,[1,2,0])) || (compAr(this.arregloManos,[1,2,0]))){
+ 		aux = true; 	
+	}
+
+	if ((compAr(this.arregloManos,[0,1])) || (compAr(this.arregloManos,[1,0])) || (compAr(this.arregloManos,[0,0,1]))){
+		aux = true;
+		this.game.score[0] += this.puntostruco;	
+	}
+
+	if ((compAr(this.arregloManos,[0,2])) || (compAr(this.arregloManos,[2,1,0])) || (compAr(this.arregloManos,[2,0])) || (compAr(this.arregloManos,[0,0,2]))){
+		aux = true;
+		this.game.score[1] += this.puntostruco;
+	}
+
+	if ((compAr(this.arregloManos,[1,1])) || (compAr(this.arregloManos,[1,2,1])) || (compAr(this.arregloManos,[2,1,1]))){
+		aux = true;
+		this.game.score[0] += this.puntostruco; 
+	}
+
+	if ((compAr(this.arregloManos,[2,2])) || (compAr(this.arregloManos,[2,1,2])) || (compAr(this.arregloManos,[1,2,2]))){
+		aux = true;
+		this.game.score[1] += this.puntostruco;
+	}
+	
+	return aux;
+}
 
 /*
 * Let's Play :)
 */
-
 
 Round.prototype.play = function(player, action, value) {
 	
@@ -257,20 +299,22 @@ Round.prototype.play = function(player, action, value) {
 
 	//check if is needed play a card
 	this.played(action,value);
+	//this.played(action,value);
 
 	// check if is needed sum score
 	this.calculateScore(action);
-	
+
 	//check the confrontations
 	this.confrontaciones();	
 
 	//check the status of hands
-	if (this.hayGanador() == 1)
+	/*if (this.hayGanador() == 1)
 		return(this.game.player1);	
 	if (this.hayGanador() == 2)
-		return(this.game.player2);
+		return(this.game.player2); */
 
 	// Change player's turn
 	return this.changeTurn();
-}
+};
+
 module.exports.round = Round;

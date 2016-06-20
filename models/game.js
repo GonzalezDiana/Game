@@ -23,20 +23,23 @@ db.once('open', function(){
 /*Definimos el esquema de nuestro juego*/
 var GameSchema = mongoose.Schema({
 	name: String,
-	player1: PlayerSchema,
+	player1: PlayerSchema, //Uso el jugador completo ahora, ya no uso el id.
 	player2: PlayerSchema,
 	rounds: {type: Array, default : [] },
-	currentHand: String, //jugador
+	currentHand: PlayerSchema, //String, //jugador
 	//currentRound: {type: ObjectId, ref: 'Round'},
 	currentRound : Object,
 	score: {type: Array, default : [0,0] },
 
 });
 
+/*
+  * Create and return a new Round to this game
+  */
 GameSchema.methods.newRound = function(){
    var round = new Round(this, this.currentHand);
    this.currentRound = round;
-   this.currentHand = this.switchPlayer(this.currentHand);
+   this.currentHand = this.switchPlayer(); //(this.currentHand);
    //this.rounds.push(round);
    return this;
  }
@@ -55,42 +58,29 @@ var Game = mongoose.model('Game', GameSchema);
  
    return this.currentRound.play(player, action, value);
  };
- 
- /*
-  * Create and return a new Round to this game
-  */
- /*Game.prototype.newRound = function(){
-   var round = new Round(this, this.currentHand);
-   this.currentRound = round;
-   this.currentHand = switchPlayer(this.currentHand);
-   this.rounds.push(round);
-	 console.log("Crea ronda " + this.rounds + " ronda " + round);
-   return this;
- }*/
-
- /*
-  * returns the oposite player
-  */
 
 //returns the oposite player
-Game.prototype.switchPlayer = function (player) {
-  if (player == this.player1.name){
-  	player = this.player2;
-  }
-  else{
-  	player = this.player1;
-  }
-  return player;
+Game.prototype.switchPlayer = function(){
+	//console.log(game.currentHand == game.player1);
+	//console.log(this.currentHand);
+	//console.log(this.player1);
+	if (this.currentHand == this.player1)
+		return this.currentHand = this.player2;
+	else
+		return this.currentHand = this.player1;
 };
-
  
+//Nos indica quien gana la confrontacion de puntos 
 Game.prototype.pointWin = function(){
+	//gana el jugador 1
 	if (this.player1.points() > this.player2.points()){
 		return this.player1;
 	}
+	//gana el jugador 2
 	if (this.player1.points() < this.player2.points()){
 		return this.player2;
 	}
+	//en caso de haber empate, gana el que es mano
 	if (this.player1.points() == this.player2.points()){
 		if (this.currentHand == this.player1)
 			return this.player1;
@@ -99,7 +89,6 @@ Game.prototype.pointWin = function(){
 	}
 }
 
-
- module.exports.game = Game;
+module.exports.game = Game;
 
 
