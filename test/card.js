@@ -25,8 +25,10 @@ describe('Card', function() {
       expect(c.show()).to.be.eq("1: copa");
     });
   });
+
+	//AHORA UTILIZAMOS LA FUNCION CONFRONT EN RONDA PARA CONFRONTAR LAS CARTAS
 	//confronts the cards
-  describe("#confront", function(){
+  /*describe("#confront", function(){
     var c = new Card(7, 'espada');
     var x = new Card(7, 'copa');
     var y = new Card(2, 'oro');
@@ -47,7 +49,7 @@ describe('Card', function() {
       it("should returns 1", function(){
         expect(y.confront(x)).to.be.eq(1);
       })
-    });
+    }); */
 
 		//Black Card True
 		describe("Black Card True", function(){
@@ -63,7 +65,5 @@ describe('Card', function() {
 				var d = new Card(4, 'copa');
 				expect(d.isBlack()).to.be.eq(false);
 			})
-		})
-		
+		})	
   });
-});

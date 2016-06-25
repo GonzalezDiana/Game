@@ -9,7 +9,37 @@ var Player = playerModel.player;
 var Card = cardModel.card;
 var Game = gameModel.game;
 
-describe('Player', function(){
+//VOLVEMOS A LOS TEST ANTERIORES PORQUE YA NO USAMOS PLAYER COMO UN SCHEMA
+
+describe('#PLAYER Points', function() {		
+		var player1 = new Player('Diana');
+		var player2 = new Player('Juan');
+		player1.setCards([new Card(1, 'copa'), new Card(7, 'oro'), new Card(6, 'oro')]);
+		player2.setCards([new Card(12, 'copa'), new Card(10, 'copa'), new Card(3, 'oro')]);
+		it('should points player1 return 33', function(){
+      expect(player1.points()).to.be.eq(33);
+    });
+
+		it('should points player2 return 20', function(){
+			expect(player2.points()).to.be.eq(20);
+	 	});
+	
+			var player3 = new Player('Esteban');
+			var player4 = new Player('Antonio');
+			player3.setCards([new Card(1, 'copa'), new Card(7, 'oro'), new Card(2, 'basto')]);
+			player4.setCards([new Card(11, 'copa'), new Card(11, 'basto'), new Card(11, 'oro')]);
+	
+		it('should points game2.player1 return 7', function(){
+			expect(player3.points()).to.be.eq(7);
+	 	});
+		
+		it('should points game2.player2 return 0', function(){
+			expect(player4.points()).to.be.eq(0);
+	 	}); 
+});
+
+
+/*describe('Player', function(){
 	var player1 = new Player({name: 'Juan'});
 	var player2 = new Player({name: 'Emma Watson'});
 
@@ -98,53 +128,5 @@ describe ('Puntos del Envido', function(){
 		var p=new Player ({name:"Juan", password:"1995", cards:cartas});
 		expect(p.points()).to.be.equal(0);
 	});
-});// end describe envido
-
-
-
-//------------------------------------------------- TEST ANTERIORES ------------------------------------------------------------
-	//controls the amount of points
-/*	describe('Points', function() {		
-		var game = new Game();
-		game.player1.setCards([
-			new Card(1, 'copa'),
-			new Card(7, 'oro'),
-			new Card(6, 'oro')
-		]);
-		game.player2.setCards([
-			new Card(12, 'copa'),
-			new Card(10, 'copa'),
-			new Card(3, 'oro')
-		]);
-		it('should points player1 return 33', function(){
-      expect(game.player1.points()).to.be.eq(33);
-    });
-
-		it('should points player2 return 20', function(){
-			expect(game.player2.points()).to.be.eq(20);
-	 	});
-	});
-		
-		var game2 = new Game{};
-		game2.player1.setCards([
-			new Card(1, 'copa'),
-			new Card(7, 'oro'),
-			new Card(2, 'basto')
-		]);
-		game2.player2.setCards([
-			new Card(11, 'copa'),
-			new Card(11, 'basto'),
-			new Card(11, 'oro')
-		]);
-	
-		it('should points game2.player1 return 7', function(){
-			expect(game2.player1.points()).to.be.eq(7);
-	 	});
-		
-		it('should points game2.player2 return 0', function(){
-			expect(game2.player2.points()).to.be.eq(0);
-	 	}); 
-	});
 }); */
-
 

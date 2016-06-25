@@ -10,7 +10,7 @@ var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/Game_test');
 
 describe('Game', function(done){
-	it('#save El juego de tu vida y jugador Juan.', function(done){
+	it('#save El juego de tu vida con jugador Juan.', function(done){
 		var g = new Game({name: 'El juego de tu vida'});
 		g.save(function(err, game){
       console.log("Saved game El juego de tu vida.");
@@ -20,32 +20,32 @@ describe('Game', function(done){
 				done(err);
       }
 
-      var p = new Player({name: "Juan", currentGame: game});
+      var p = new Player('Juan');
 
-      p.save(function(err, player){
+      /*p.save(function(err, player){
       	console.log("Saving player Juan.");
 				if (err) { 
 					console.log(err);
 					done(err);
       	}
         //console.log(player.name);
-      });
+      }); */
       done();
 		});
 	});   
 
   it('#save Tutatuta y jugador Diana.', function(done){
-		var p = new Player({name: 'Diana'});
+		var p = new Player('Diana');
 		
-	  p.save(function(err, player){
+	  /*p.save(function(err, player){
       console.log("Saved player Diana.");
       if (err) { 
         console.log(err);
 				done(err);
-      }
+      } */
 			//console.log(player.name);
 
-      var g = new Game({name: "tutatuta", player1: player});
+      var g = new Game({name: "tutatuta", player1: p});
 
       g.save(function(err, game){
          console.log("saving game tutatuta");
@@ -73,7 +73,11 @@ describe('Game', function(done){
 
     var cardsjug1 = [new Card(2,'oro'), new Card(7,'oro'),new Card(3,'basto')];
     var cardsjug2 = [new Card(5,'basto'), new Card(1,'espada'), new Card(3,'espada')];
-    var jug1 = new Player({name: "Juan", password:"3876", cards: cardsjug1, envidoPoints: 29});
+		var jug1 = new Player('Juan');
+		jug1.setCards(cardsjug1);
+		var jug2 = new Player('Diana');
+		jug2.setCards(cardsjug2);
+    /*var jug1 = new Player({name: "Juan", password:"3876", cards: cardsjug1, envidoPoints: 29});
     var jug2 = new Player({name: "Diana", password:"1234", cards: cardsjug2, envidoPoints: 24});
     
     jug1.save(function (err,player1){
@@ -86,13 +90,13 @@ describe('Game', function(done){
         if(err){
           console.log(err);
           done(err)
-        }
+        } */
         var data = {
           name : 'Truco argentino',
-          player1: player1,
-          player2: player2,
+          player1: jug1,
+          player2: jug2,
           rounds : [],
-          currentHand: player2,
+          currentHand: jug2,
           currentRound : undefined,
           score : [0,0]
         };
@@ -104,9 +108,11 @@ describe('Game', function(done){
             console.log(err);
             done(err)
           }
-          
+					done();
+        });
+ });
 					//recuperamos el jugador 2 - Diana
-          Game.findOne({player2:player2._id},function(err,result){
+          /*Game.findOne({player2:player2._id},function(err,result){
             if (err) {
               console.log(err);
               done(err);
@@ -117,14 +123,8 @@ describe('Game', function(done){
               done();
 
             }); 
-          });
-
-        });
-      });
-    });
-	}); 
-}); //end test
-
+          }); */
+      
 
 
 
