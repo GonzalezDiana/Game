@@ -11,8 +11,9 @@ block content
     lead Seleccione una acción para jugar.
     br
     br
-    form(role='form', action="/play",method="post") 
-      //input.form-control(type="hidden", name='gameid', value='#{g._id}')
+    form(role='form', action="/play",method="post")
+     .form-group 
+      input.form-control(type="hidden", name='gameid', value='#{g._id}')
       if g.currentRound.fsm.can('truco')
         input(type="submit", name="accion", value='Truco')
       if g.currentRound.fsm.can('envido')
@@ -22,11 +23,11 @@ block content
       if g.currentRound.fsm.can('no-quiero')
         input(type="submit", name="accion", value='No-quiero')
       if g.currentRound.fsm.can('playcard')
-        if  (g.currentRound.currentTurn.cards[0]!== undefined)
-          input(type="submit", name="accion", value='Jugar carta 1')
-        if  (g.currentRound.currentTurn.cards[0]!== undefined) 
-          input(type="submit", name="accion", value='Jugar carta 2')
-        if  (g.currentRound.currentTurn.cards[0]!== undefined)  
-          input(type="submit", name="accion", value='Jugar carta 3')
+        if  (g.currentRound.currentTurn.cards[0] !== undefined)
+            input(type="submit", name="accion", value='Jugar carta 1')
+        if  (g.currentRound.currentTurn.cards[1] !== undefined)
+            input(type="submit", name="accion", value='Jugar carta 2')
+        if  (g.currentRound.currentTurn.cards[2] !== undefined)  
+            input(type="submit", name="accion", value='Jugar carta 3')
       &nbsp;
 

@@ -5,30 +5,29 @@
  */
 
 var mongoose = require('mongoose');
-var db= mongoose.createConnection('mongodb://localhost/Game');
+//var db= mongoose.createConnection('mongodb://localhost/Game');
 var _ = require('lodash');
 
-var PlayerSchema = mongoose.Schema({
-	name: String,
-	cards: {type: Array, default : [] },
-	cartasJugadas:{type: Array, default : [] },
-	envidoPoints:Number,
-  currentGame: {type: Number, ref: 'Game' }
-});
+function Player(name){
+	this.name = name;
+	this.cards = [];
+	this.cartasJugadas = [];
+	this.envidoPoints = 0;
+};
 
 //Asigna cartas a los jugadores y calcula sus puntos del envido.
-PlayerSchema.methods.setCards = function(cards){
+Player.prototype.setCards = function(cards){
 	this.cards = cards;
 	this.envidoPoints = this.points();
 }
 
 //Envido Points
-PlayerSchema.methods.points = function(){
+Player.prototype.points = function(){
   return Math.max(this.cards[0].puntos(this.cards[1]), this.cards[0].puntos(this.cards[2]), this.cards[1].puntos(this.cards[2]));
 };
 
 
-var Player = mongoose.model('Player', PlayerSchema); 
+
 
 module.exports.player = Player;
-module.exports.playerSchema = PlayerSchema;
+

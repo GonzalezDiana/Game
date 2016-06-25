@@ -13,14 +13,14 @@ var Player = playerModel.player;
 var StateMachine = require("../node_modules/javascript-state-machine/state-machine.js");
 
 
-function newTrucoFSM(){
+Round.prototype.newTrucoFSM = function(estadoactual){
 	var fsm = StateMachine.create({
-	initial: 'init',
+	initial: estadoactual == undefined ? 'init' : estadoactual,
 	events: [
-		{ name: 'playcard', from: 'init',                           to: 'primer carta' },
-		{ name: 'envido',    from: ['init', 'primer carta'],         to: 'envido' },
-		{ name: 'truco',     from: ['init', 'played card','primer carta'],          to: 'truco'  },
-		{ name: 'playcard', from: ['quiero', 'no-quiero','primer carta', 'played card'],  to: 'played card' },
+		{ name: 'playcard', from: 'init',                           to: 'primer-carta' },
+		{ name: 'envido',    from: ['init', 'primer-carta'],         to: 'envido' },
+		{ name: 'truco',     from: ['init', 'playcard','primer-carta', 'no-quiero', 'quiero'],          to: 'truco'  },
+		{ name: 'playcard', from: ['quiero', 'no-quiero', 'playcard', 'primer-carta'],  to: 'playcard' },
 		{ name: 'quiero',    from: ['envido', 'truco'],              to: 'quiero'  },
 		{ name: 'no-quiero', from: ['envido', 'truco'],              to: 'no-quiero' },
 	]
@@ -28,17 +28,19 @@ function newTrucoFSM(){
 	return fsm;
 }
 
+
 function Round(game, turn){
-	//- ESTO HABRÍA QUE MEJORARLO PORQUE ENTRA EN BUCLE :( ---
-	this.game = {_id:game._id,player1:game.player1,player2:game.player2,currentHand:game.currentHand,__proto__:game.__proto__};
-	this.fsm = newTrucoFSM();
+	//- ESTO HABRÍA QUE MEJORARLO PORQUE ENTRA EN BUCLE :( ---	
+	this.player1 = new Player (game.player1.name);	
+	this.player2 = new Player (game.player2.name);	
+	this.fsm = this.newTrucoFSM();
 	this.status = 'running';
 	this.arregloManos = []; //Manos jugadas y ganadas por los jugadores 
 	this.score = [0, 0];
 	this.prevstate=null;
 	this.puntostruco=1;
 	this.deal(); //Reparto Cartas
-	this.currentTurn = this.game.switchPlayer(turn) ;
+	this.currentTurn = this.switchPlayer(turn) ;
 }
 
 /*
@@ -46,8 +48,8 @@ function Round(game, turn){
 */
 Round.prototype.deal = function(){
 	var deck = new Deck().mix();
-	this.game.player1.setCards(_.pullAt(deck, 0, 2, 4));
-	this.game.player2.setCards(_.pullAt(deck, 1, 3, 5));
+	this.player1.setCards(_.pullAt(deck, 0, 2, 4));
+	this.player2.setCards(_.pullAt(deck, 1, 3, 5));
 };
 
 /* Cambia el turno de los jugadores. DEBERÍAMOS VER CASOS MÁS CONCRETOS
@@ -57,11 +59,12 @@ Round.prototype.deal = function(){
 * + if action is 'quiero' or 'no-quiero' and it's playing 'envido' the next
 * player to play is who start to chant */
 Round.prototype.changeTurn = function(){
-	//return this.currentTurn = this.switchPlayer(this.currentTurn);
-	if (this.currentTurn == this.game.player1)
-		return this.currentTurn = this.game.player2;
+	//return this.currentTurn = this.switchPlayer(this.currentTurn);	
+	if (this.currentTurn.name == this.player1.name)
+		this.currentTurn = this.player2;		
 	else
-		return this.currentTurn = this.game.player1;
+		this.currentTurn = this.player1;
+	
 }
 
 //Cambia el jugador corriente. 
@@ -75,6 +78,24 @@ Round.prototype.switchPlayer = function (player){
   return player;
 };
 
+Round.prototype.puntosWin = function(){
+	//gana el jugador 1
+	if(this.player1.envidoPoints > this.player2.envidoPoints){
+		return this.player1.name;
+	}
+	//gana el jugador 2
+	if (this.player1.envidoPoints < this.player2.envidoPoints){
+		return this.player2.name;
+	}
+	//en caso de haber empate, gana el que es mano
+	if (this.player1.envidoPoints == this.player2.envidoPoints){
+		if (this.currentHand.name == this.player1.name)
+			return this.player1.name;
+		else 
+			return this.player2.name;
+	}
+}
+
 //Verifica si debe tratar el puntaje
 Round.prototype.calculateScore = function(action){
 	//Si el estado previo es 'envido'
@@ -82,72 +103,80 @@ Round.prototype.calculateScore = function(action){
 		//Si el estado actual 'quiero'
 		if (action == 'quiero') {		
 			//Chequea quien gana los puntos	
-			if( this.game.pointWin() == this.game.player1 ){ //gana el jugador 1
-				this.score = [2, 0]; //le asignamos dos puntos en la ronda al jugador 1 
+			if( this.puntosWin() == this.player1.name ){ //gana el jugador 1
+				this.score[0] += 2; //le asignamos dos puntos en la ronda al jugador 1 
 			}
 			else{ //gana el jugador 2
-				this.score = [0, 2]; // le asignamos dos puntos en la ronda al jugador 2
+				this.score[1] += 2; // le asignamos dos puntos en la ronda al jugador 2
 			}
 		}
 		//Si el estado actual 'noquiero'
 		else { 
+			//console.log('Muestro los puntos de la ronda');
+			//console.log(this.score[0]);
+			//console.log(this.score[1]);
 			//Si jugador corriente es el jugador 2
-			if (this.currentTurn == this.game.player2){ 
-				this.score = [1, 0]; //le asignamos un punto en la ronda al jugador 1
+			if (this.currentTurn.name == this.player2.name){ 
+				this.score[0] += 1; //le asignamos un punto en la ronda al jugador 1 
 			}
 			//Si jugador corriente es el jugador 1
 			else{	
-				this.score = [0, 1]; //le asignamos un punto en la ronda al jugador 2
+				this.score[1] += 1; //le asignamos un punto en la ronda al jugador 2
 			}
 		}
+		//console.log(this.score[0]);
+		//console.log(this.score[1]);
 	} //fin del caso envido
 	else{
 		//Si el estado previo es 'truco'
 		if(this.prevstate == 'truco'){
 			//Si el estado actual 'quiero'
 			if (action == 'quiero'){
-				this.puntostruco+=1; //
+				this.puntostruco += 1; //
 			}
 			//Si el estado actual 'noquiero'
 			else{ 
 				//Si el jugador corriente es el jugador 2	
-				if (this.currentTurn == this.game.player2){
-					this.score = [1, 0]; //un punto para el jugador uno
+				if (this.currentTurn.name == this.player2.name){
+					this.score[0] += 1; //un punto para el jugador uno
 				}
 				//Si el jugador corriente es el jugador 1
 				else{ 	
-					this.score = [0, 1]; //un punto para el jugador 2
+					this.score[1] += 1; //un punto para el jugador 2
 				}
 			}
 		}	
 	} //fin del caso truco
 	//Actualizamos el score del juego.
-	this.game.score[0] += this.score[0];
-	this.game.score[1] += this.score[1];
 	return this.score;
 }
 
 //Inserto la carta en el arreglo de las cartas sobre la mesa(cartas jugadas)
 Round.prototype.guardarCarta = function (player, card){	
-	if (this.game.player1 === player){
- 		return this.game.player1.cartasJugadas.push(card);
+	if (this.player1.name == player.name){
+ 		this.player1.cartasJugadas.push(card);
 	}else
-		return this.game.player2.cartasJugadas.push(card);
+		this.player2.cartasJugadas.push(card);
+	//console.log(player);
 }
 
 //Toma un jugador y la carta, devuelve el arreglo de las cartas del jugador sin la carta que jugó
-Round.prototype.tirarCarta = function (player,card){	
-	if (player.cards[0] == card){
-		player.cards[0] = undefined;
-		return this.game.player;
+Round.prototype.tirarCarta = function (player,card){
+        //console.log(player.cards[0]);
+	//console.log(card);
+	//console.log(player.cards[0] === card);
+	//console.log(player);	
+	if ((player.cards[0].number == card.number) && (player.cards[0].suit == card.suit)){
+		this.currentTurn.cartasJugadas[0] = undefined;
+		return player;
 	}
-	if (player.cards[1] == card){
-		player.cards[1] = undefined;
-		return this.game.player;
+	if ((player.cards[1].number == card.number) && (player.cards[1].suit == card.suit)){
+		this.currentTurn.cartasJugadas[1] = undefined;
+		return player;
 	}
-	if (player.cards[2] == card){
-		player.cards[2] = undefined;
-		return this.game.player;
+	if ((player.cards[2].number == card.number) && (player.cards[2].suit == card.suit)){
+		this.currentTurn.cartasJugadas[2] = undefined;
+		return player;
 	}	
 }
 
@@ -160,34 +189,43 @@ Round.prototype.tiroTodas = function (player){
 	return aux;
 }
 
+confront = function(card1,card2){
+  if(card1.weight > card2.weight)
+    return 1;
+  else if(card1.weight == card2.weight)
+    return 0;
+  else if(card1.weight < card2.weight)
+    return -1;
+};
+
 //Verifica que puede realizar una confrontacion y carga un arreglo con su respectivo ganador o empate
 Round.prototype.confrontaciones = function (){	
-	//Verifica ambos jugadores jugaron una carta 
-	if (((this.game.player1.cartasJugadas[0] !== undefined) && (this.game.player2.cartasJugadas[0] !== undefined)) && (this.arregloManos[0] == undefined))
-		if ((this.game.player1.cartasJugadas[0].confront(this.game.player2.cartasJugadas[0])) == 1)
+	//Verifica ambos jugadores jugaron una carta
+	if (((this.player1.cartasJugadas[0] !== undefined) && (this.player2.cartasJugadas[0] !== undefined)) && (this.arregloManos[0] == undefined))
+		if ((confront(this.player1.cartasJugadas[0],this.player2.cartasJugadas[0])) == 1)
 			return this.arregloManos.push(1);		
 		else 
-			if ((this.game.player1.cartasJugadas[0].confront(this.game.player2.cartasJugadas[0])) == -1) 		
+			if ((confront(this.player1.cartasJugadas[0],this.player2.cartasJugadas[0])) == -1) 		
 				return this.arregloManos.push(2);
 			else	
 				return this.arregloManos.push(0);
 
 	//Verifica ambos jugadores jugaron dos cartas 
-	if (((this.game.player1.cartasJugadas[1] !== undefined) && (this.game.player2.cartasJugadas[1] !== undefined)) && (this.arregloManos[1] == undefined)) 	
-		if ((this.game.player1.cartasJugadas[1].confront(this.game.player2.cartasJugadas[1])) == 1)
+	if (((this.player1.cartasJugadas[1] !== undefined) && (this.player2.cartasJugadas[1] !== undefined)) && (this.arregloManos[1] == undefined)) 	
+		if ((confront(this.player1.cartasJugadas[1],this.player2.cartasJugadas[1])) == 1)
 			return this.arregloManos.push(1);		
 		else
-			if ((this.game.player1.cartasJugadas[1].confront(this.game.player2.cartasJugadas[1])) == -1) 		
+			if ((confront(this.player1.cartasJugadas[1],this.player2.cartasJugadas[1])) == -1) 		
 				return this.arregloManos.push(2);
 			else
 				return this.arregloManos.push(0);
 	
 	//Verifica ambos jugadores jugaron 3 cartas
-	if (((this.game.player1.cartasJugadas[2] !== undefined) && (this.game.player2.cartasJugadas[2] !== undefined)) && (this.arregloManos[2] == undefined))	
-		if ((this.game.player1.cartasJugadas[2].confront(this.game.player2.cartasJugadas[2])) == 1)
+	if (((this.player1.cartasJugadas[2] !== undefined) && (this.player2.cartasJugadas[2] !== undefined)) && (this.arregloManos[2] == undefined)) 	
+		if ((confront(this.player1.cartasJugadas[2],this.player2.cartasJugadas[2])) == 1)
 			return this.arregloManos.push(1);		
 		else	
-			if ((this.game.player1.cartasJugadas[2].confront(this.game.player2.cartasJugadas[2])) == -1)	
+			if ((confront(this.player1.cartasJugadas[2],this.player2.cartasJugadas[2])) == -1)	
 				return this.arregloManos.push(2);
 			else
 				return this.arregloManos.push(0);
@@ -203,38 +241,41 @@ Round.prototype.played = function (action, card){
 			* guarda card en el arreglo de las cartas jugadas del jugador corriente
 			* tira card de las cartas del jugador corriente
 			*/
-			if (this.currentTurn == this.game.player1){
-				this.guardarCarta(this.game.player1, card); 
-				this.tirarCarta(this.game.player1, card); 
-				return this.game.player1;
+			if (this.currentTurn.name == this.player1.name){
+				//console.log('REALIZANDO CAMBIOS PARA EL JUGADOR 1!!!!');
+				this.guardarCarta(this.player1, card); 
+				this.tirarCarta(this.player1, card); 
+				return this.player1;
 			//Si el jugador corriente es el jugador 2, realiza el mismo tratamiento
 			}else{
-				this.guardarCarta(this.game.player2, card);
-				this.tirarCarta(this.game.player2, card);
-				return this.game.player2;
+				//console.log('REALIZANDO CAMBIOS PARA EL JUGADOR 2!!!!');
+				this.guardarCarta(this.player2, card);
+				this.tirarCarta(this.player2, card);				
+				return this.player2;
+			
 		//Si el estado previo es 'quiero', 'noquiero', 'playcard', 'primer carta'
-		}else if((this.prevstate == 'quiero') || (this.prevstate == 'no-quiero') || (this.prevstate == 'playcard') || (this.prevstate == 'primer carta')) 			
+		}else if((this.prevstate == 'quiero') || (this.prevstate == 'no-quiero') || (this.prevstate == 'playcard') || (this.prevstate == 'primer-carta')) 			
 			//Si el jugador corriente es el jugador 1				
-			if (this.currentTurn == this.game.player1){
+			if (this.currentTurn.name == this.player1.name){
 				//Si el jugador corriente no tiro todas las cartas
-				if (this.tiroTodas(this.game.player1) == false){
+				if (this.tiroTodas(this.player1) == false){
 					/*guarda card en el arreglo de las cartas jugadas del jugador corriente
 					* tira card de las cartas del jugador corriente
 					*/
-					this.guardarCarta(this.game.player1, card);
-					this.tirarCarta(this.game.player1, card);
+					this.guardarCarta(this.player1, card);
+					this.tirarCarta(this.player1, card);
 				//Devuelve un error ya que no hay mas cartas para jugar
 				}else
 					throw new Error("Se jugaron todas las cartas no puede volver a tirar.");
-				return this.game.player1;
+				return this.player1;
 			//Si el jugador corriente es el jugador 2, realiza el mismo tratamiento
 			}else{	
-				if (this.tiroTodas(this.game.player2) == false){
-					this.guardarCarta(this.game.player2, card);
-					this.tirarCarta(this.game.player2, card);
+				if (this.tiroTodas(this.player2) == false){
+					this.guardarCarta(this.player2, card);
+					this.tirarCarta(this.player2, card);
 				}else
 					throw new Error("Se jugaron todas las cartas no puede volver a tirar.");
-				return this.game.player2;
+				return this.player2;
 			}		
 	}
 }
@@ -256,31 +297,45 @@ function compAr(arreglo, arreglo0){
 }
 
 //Devuelve un valor booleano: True=Hay ganador, False=No hay ganador
-Round.prototype.hayGanador = function (){
+Round.prototype.hayGanador = function (action,game){
 	var aux = false;
 
-	if ((compAr(this.arregloManos,[0,0,0])) || (compAr(this.arregloManos,[1,2,0])) || (compAr(this.arregloManos,[1,2,0]))){
- 		aux = true; 	
+	if (( action== 'no-quiero') && (this.prevstate == 'truco'))
+	 	aux = true;
+
+	if (compAr(this.arregloManos,[0,0,0])){
+ 		//aux = true;
+		if (game.currentHand.name == this.player1.name)
+			this.score[0] = this.puntostruco[0];
+		else
+			this.score[1] = this.puntostruco[0];
 	}
 
+	if (compAr(this.arregloManos,[1,2,0]))
+		this.score[0] += this.puntostruco;
+
+	if (compAr(this.arregloManos,[2,1,0]))
+		this.score[1] += this.puntostruco;	
+		
 	if ((compAr(this.arregloManos,[0,1])) || (compAr(this.arregloManos,[1,0])) || (compAr(this.arregloManos,[0,0,1]))){
 		aux = true;
-		this.game.score[0] += this.puntostruco;	
+		this.score[0] += this.puntostruco;	
 	}
 
 	if ((compAr(this.arregloManos,[0,2])) || (compAr(this.arregloManos,[2,1,0])) || (compAr(this.arregloManos,[2,0])) || (compAr(this.arregloManos,[0,0,2]))){
 		aux = true;
-		this.game.score[1] += this.puntostruco;
+		this.score[1] += this.puntostruco;
 	}
 
-	if ((compAr(this.arregloManos,[1,1])) || (compAr(this.arregloManos,[1,2,1])) || (compAr(this.arregloManos,[2,1,1]))){
+	if ((compAr(this.arregloManos,[1,1])) || (compAr(this.arregloManos,[1,2,1])) || (compAr(this.arregloManos,[2,1,1]))){		
 		aux = true;
-		this.game.score[0] += this.puntostruco; 
+		this.score[0] += this.puntostruco; 
 	}
 
 	if ((compAr(this.arregloManos,[2,2])) || (compAr(this.arregloManos,[2,1,2])) || (compAr(this.arregloManos,[1,2,2]))){
 		aux = true;
-		this.game.score[1] += this.puntostruco;
+		this.score[1] += this.puntostruco;
+
 	}
 	
 	return aux;
@@ -309,9 +364,9 @@ Round.prototype.play = function(player, action, value) {
 
 	//check the status of hands
 	/*if (this.hayGanador() == 1)
-		return(this.game.player1);	
+		return(this.player1);	
 	if (this.hayGanador() == 2)
-		return(this.game.player2); */
+		return(this.player2); */
 
 	// Change player's turn
 	return this.changeTurn();

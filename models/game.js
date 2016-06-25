@@ -6,7 +6,6 @@ var cardModel = require('./card');
 var roundModel = require('./round');
 
 var Player = playerModel.player;
-var PlayerSchema = playerModel.playerSchema;
 var Round  = roundModel.round;
 
 /** MONGOOSE **/
@@ -23,47 +22,53 @@ db.once('open', function(){
 /*Definimos el esquema de nuestro juego*/
 var GameSchema = mongoose.Schema({
 	name: String,
-	player1: PlayerSchema, //Uso el jugador completo ahora, ya no uso el id.
-	player2: PlayerSchema,
-	rounds: {type: Array, default : [] },
-	currentHand: PlayerSchema, //String, //jugador
-	//currentRound: {type: ObjectId, ref: 'Round'},
-	currentRound : Object,
-	score: {type: Array, default : [0,0] },
-
+	player1: Object, //Uso el jugador completo ahora, ya no uso el id.
+	player2: Object,
+	//rounds: {type: Array, default : [] },
+	currentHand: Object, //String, //jugador
+	currentRound: {type: Object, ref : 'Ronda'},
+        score: {type: Array, default : [0,0]},
 });
+
+
 
 /*
   * Create and return a new Round to this game
   */
-GameSchema.methods.newRound = function(){
+var Game = mongoose.model('Game', GameSchema);
+
+Game.prototype.newRound = function(){
    var round = new Round(this, this.currentHand);
    this.currentRound = round;
-   this.currentHand = this.switchPlayer(); //(this.currentHand);
    //this.rounds.push(round);
-   return this;
+   return round;
  }
 
-
-var Game = mongoose.model('Game', GameSchema);
  /*
   * Check if it's valid move and play in the current round
   */
  Game.prototype.play = function(player, action, value){
+   //console.log(player);
+   //console.log(action);
+   //console.log(value);
+  
    if(this.currentRound.currentTurn !== player)
      throw new Error("[ERROR] INVALID TURN...");
- 
+   //console.log(this.currentRound.fsm.current);
+   
+   //console.log(this.currentRound.fsm.current);
    if(this.currentRound.fsm.cannot(action))
      throw new Error("[ERROR] INVALID MOVE...");
- 
+   
+   
    return this.currentRound.play(player, action, value);
  };
 
 //returns the oposite player
 Game.prototype.switchPlayer = function(){
-	//console.log(game.currentHand == game.player1);
-	//console.log(this.currentHand);
-	//console.log(this.player1);
+	////console.log(game.currentHand == game.player1);
+	////console.log(this.currentHand);
+	////console.log(this.player1);
 	if (this.currentHand == this.player1)
 		return this.currentHand = this.player2;
 	else
@@ -71,23 +76,7 @@ Game.prototype.switchPlayer = function(){
 };
  
 //Nos indica quien gana la confrontacion de puntos 
-Game.prototype.pointWin = function(){
-	//gana el jugador 1
-	if (this.player1.points() > this.player2.points()){
-		return this.player1;
-	}
-	//gana el jugador 2
-	if (this.player1.points() < this.player2.points()){
-		return this.player2;
-	}
-	//en caso de haber empate, gana el que es mano
-	if (this.player1.points() == this.player2.points()){
-		if (this.currentHand == this.player1)
-			return this.player1;
-		else 
-			return this.player2;
-	}
-}
+
 
 module.exports.game = Game;
 

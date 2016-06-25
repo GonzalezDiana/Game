@@ -52,14 +52,7 @@ Card.prototype.show = function(){
  *   0 if are equal and
  *   -1 if it's worst
  */
-Card.prototype.confront = function(card){
-  if(this.weight > card.weight)
-    return 1;
-  else if(this.weight == card.weight)
-    return 0;
-  else if(this.weight < card.weight)
-    return -1;
-};
+
 
 //Black Card
 Card.prototype.isBlack = function(){
